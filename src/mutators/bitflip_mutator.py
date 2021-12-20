@@ -5,9 +5,9 @@ class BitFlippingMutator:
 
     '''
     parameters:
-    ratio - proportion of bits that are changing
+    ratio - proportion of bits that are changing (default is 0.005)
     '''
-    def __init__(self, ratio):
+    def __init__(self, ratio=0.005):
         self.ratio = ratio
 
     '''
