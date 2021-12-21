@@ -20,7 +20,7 @@
     <data name="reserved2" size="2">
     <int name="pixelArrayOffset" size="4"> <relation type="offset" target="pixelArray"> </int>
 
-    <custom type="DIBHeader">
+    <custom name="DIBHeaderField" type="DIBHeader">
     
     <data name="pixelArray">
 </file>
