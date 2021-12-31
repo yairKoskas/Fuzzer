@@ -7,26 +7,17 @@ it can also use other generators to generate data recursivly.
 Support generating valid data and also mutating it.
 '''
 class Generator:
-    '''
-    Upon initialization, always holds valid data (or 'dummy' data if waiting to resolve a relation)
-    '''
     def __init__(self) -> None:
         pass
 
     '''
-    Return the size of data generated, in bytes.
+    Get valid value.
     '''
-    def __len__(self) -> int:
-        return 0
-
-    '''
-    Get the current data of the genrator.
-    '''
-    def value(self) -> bytes:
+    def valid_value(self) -> bytes:
         pass
 
     '''
-    Mutate the current data of the generator (might be invalid afterwards).
+    Get (maybe) invalid value.
     '''
-    def mutate(self):
+    def invalid_value(self) -> bytes:
         pass

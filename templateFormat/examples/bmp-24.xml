@@ -4,12 +4,12 @@
     <int name="imgHeight" size="4">
     <int name="const" size="2" value="1">
     <int name="bitsPerPixel" size="2" value="24">
-    <int name="compression " size="4" value="0">
-    <int name="sizeWithoutCompression " size="4" value="0">
-    <int name="horRes " size="4" value="0">
-    <int name="verRes " size="4" value="0">
-    <int name="colorPaletteSize  " size="4" value="0">
-    <int name="importantColors  " size="4" value="0">
+    <int name="compression" size="4" value="0">
+    <int name="sizeWithoutCompression" size="4" value="0">
+    <int name="horRes" size="4" value="0">
+    <int name="verRes" size="4" value="0">
+    <int name="colorPaletteSize" size="4" value="0">
+    <int name="importantColors" size="4" value="0">
 </type>
 
 <file name="bmp24">
