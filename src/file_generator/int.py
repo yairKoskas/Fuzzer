@@ -5,8 +5,9 @@ from generator import Generator
 
 class Int(Generator):
 
-    def __init__(self, size, value=None, endian='little'):
+    def __init__(self, size, name=None, value=None, endian='little'):
         self._size = size
+        self.name = name
         self._value = value
         self._endian = endian
 

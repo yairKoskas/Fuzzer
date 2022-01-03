@@ -12,7 +12,8 @@ class Type(Generator):
     generators - list of generators
     '''
 
-    def __init__(self, generators: list):
+    def __init__(self, generators: list, name=None):
+        self.name = name
         self._generators = generators
 
     def valid_value(self):

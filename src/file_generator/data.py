@@ -12,7 +12,8 @@ class Data(Generator):
     # maximum length of the default value
     MAX_LENGTH = 20
 
-    def __init__(self, size=None, value=None):
+    def __init__(self, name=None, size=None, value=None):
+        self.name = name
         self._value = value
         self._size = size
 
