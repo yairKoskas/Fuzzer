@@ -6,6 +6,9 @@ from pathlib import Path
 
 class GeneratorParser:
 
+    """
+    path - the path to the template format xml file
+    """
     def __init__(self, path: Path):
         # will throw ParseError if path isn't a valid xml file
         self.xml_tree = Et.parse(path)
@@ -17,14 +20,17 @@ class GeneratorParser:
         for child in root:
             self.generators.append(self.get_generator(child))
 
-    def get_generator(self, xml_element: Et.Element):
+    '''
+    get a generator for an xml element
+    returns - a generator
+    '''
+    def get_generator(self, xml_element: Et.Element) -> Union[List[Generator], Generator]:
         if xml_element.tag == 'type':
             generators = []
             for child in xml_element:
                 generators.append(self.get_generator(child))
-            generator_args = xml_element.attrib
-            generator_args['generators'] = generators
-            return GeneratorFactory.get_generator(xml_element.tag)(**generator_args)
+            args = xml_element.attrib
+            return GeneratorFactory.get_generator(xml_element.tag)(args.update({'generators': generators}))
         else:
             generator_class = GeneratorFactory.get_generator(xml_element.tag)
             if generator_class:
