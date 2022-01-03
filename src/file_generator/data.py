@@ -20,7 +20,7 @@ class Data(Generator):
     def valid_value(self):
         # if value is not specified, choose at random
         if self._size is not None:
-            size = self._size
+            size = int(self._size)
         else:
             size = random.randint(0, Data.MAX_LENGTH + 1)
 

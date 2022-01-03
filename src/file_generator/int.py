@@ -6,7 +6,7 @@ from generator import Generator
 class Int(Generator):
 
     def __init__(self, size, name=None, value=None, endian='little'):
-        self._size = size
+        self._size = int(size)
         self.name = name
         self._value = value
         self._endian = endian
@@ -16,7 +16,7 @@ class Int(Generator):
         if self._value is None:
             value = random.randint(0, 2 ** self._size)
         else:
-            value = self._value
+            value = int(self._value)
 
         return value.to_bytes(self._size, byteorder=self._endian)
 

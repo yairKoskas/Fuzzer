@@ -24,11 +24,13 @@ class GeneratorParser:
     get a generator for an xml element
     returns - a generator
     '''
-    def get_generator(self, xml_element: Et.Element) -> Union[List[Generator], Generator]:
+    def get_generator(self, xml_element: Et.Element) ->  Generator:
         if xml_element.tag == 'type':
             generators = []
             for child in xml_element:
-                generators.append(self.get_generator(child))
+                gen = self.get_generator(child)
+                if gen is not None:
+                    generators.append(gen)
             args = xml_element.attrib
             args.update({'generators': generators})
             return GeneratorFactory.get_generator(xml_element.tag)(**args)
