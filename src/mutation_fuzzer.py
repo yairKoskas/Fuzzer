@@ -35,7 +35,7 @@ class MutationFuzzer:
 
 
         # copy content to the crashed folder if neccesary
-        if retcode != 0:
+        if retcode != 0 and retcode != 1:
             with open(temp_file, 'rb') as f1:
                 crash_path = os.path.join(self.crash_folder, str(self.crashes))
                 self.crashes += 1

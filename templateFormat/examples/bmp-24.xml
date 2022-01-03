@@ -18,7 +18,7 @@
 	<type name="file">
 		<!-- header -->
 		<str name="magic" value="BM"/>
-		<int name="fileSize" size="4" value="94">
+		<int name="fileSize" size="4" value="94" endian="little">
 			<relation type="size" target="father"/>
 		</int>
 		<data name="reserved1" size="2"/>
