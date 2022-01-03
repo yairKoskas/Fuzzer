@@ -30,7 +30,8 @@ class GeneratorParser:
             for child in xml_element:
                 generators.append(self.get_generator(child))
             args = xml_element.attrib
-            return GeneratorFactory.get_generator(xml_element.tag)(args.update({'generators': generators}))
+            args.update({'generators': generators})
+            return GeneratorFactory.get_generator(xml_element.tag)(**args)
         else:
             generator_class = GeneratorFactory.get_generator(xml_element.tag)
             if generator_class:
