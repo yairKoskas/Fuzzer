@@ -16,9 +16,9 @@ class GeneratorParser:
         root = self.xml_tree.getroot()
         assert root.tag == 'file', 'Root tag in template xml should be a file tag'
         self.file_format = root.attrib
-        self.generators = []
+        self.generators = {}
         for child in root:
-            self.generators.append(self.get_generator(child))
+            self.generators[child.attrib['name']] = self.get_generator(child)
 
     '''
     get a generator for an xml element
@@ -34,8 +34,13 @@ class GeneratorParser:
             args = xml_element.attrib
             args.update({'generators': generators})
             return GeneratorFactory.get_generator(xml_element.tag)(**args)
-        else:
-            generator_class = GeneratorFactory.get_generator(xml_element.tag)
-            if generator_class:
-                return generator_class(**xml_element.attrib)
-            return None
+
+        if xml_element.tag == 'custom':
+            t = xml_element.attrib['type']
+            if t in self.generators:
+                return self.generators[t]
+
+        generator_class = GeneratorFactory.get_generator(xml_element.tag)
+        if generator_class:
+            return generator_class(**xml_element.attrib)
+        return None

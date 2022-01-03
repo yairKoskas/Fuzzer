@@ -1,10 +1,10 @@
 <file name="bmp24">
 	<type name="DIBHeader">
-		<int name="headerSize" size="4">
+		<int name="headerSize" size="4" value="40">
 			<relation type="size" target="father"/>
 		</int>
-		<int name="imgWidth" size="4"/>
-		<int name="imgHeight" size="4"/>
+		<int name="imgWidth" size="4" value="3"/>
+		<int name="imgHeight" size="4" value="3"/>
 		<int name="const" size="2" value="1"/>
 		<int name="bitsPerPixel" size="2" value="24"/>
 		<int name="compression" size="4" value="0"/>
@@ -14,16 +14,19 @@
 		<int name="colorPaletteSize" size="4" value="0"/>
 		<int name="importantColors" size="4" value="0"/>
 	</type>
-    <!-- header -->
-	<str name="magic" value="BM"/>
-	<int name="fileSize" size="4">
-		<relation type="size" target="father"/>
-	</int>
-    <data name="reserved1" size="2"/>
-	<data name="reserved2" size="2"/>
-	<int name="pixelArrayOffset" size="4"> <relation type="offset" target="pixelArray"/> </int>
 
-	<custom name="DIBHeaderField" type="DIBHeader"/>
-    
-	<data name="pixelArray"/>
+	<type name="file">
+		<!-- header -->
+		<str name="magic" value="BM"/>
+		<int name="fileSize" size="4" value="94">
+			<relation type="size" target="father"/>
+		</int>
+		<data name="reserved1" size="2"/>
+		<data name="reserved2" size="2"/>
+		<int name="pixelArrayOffset" size="4" value="54"> <relation type="offset" target="pixelArray"/> </int>
+
+		<custom name="DIBHeaderField" type="DIBHeader"/>
+		
+		<data name="pixelArray" size="40"/>
+	</type>
 </file>

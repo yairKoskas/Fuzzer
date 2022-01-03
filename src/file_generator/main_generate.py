@@ -1,4 +1,9 @@
 import generator_parser
+import sys
 
-parser = generator_parser.GeneratorParser(r'templateFormat/examples/bmp-24.xml')
-print(parser.generators[1].valid_value())
+path = sys.argv[1]
+parser = generator_parser.GeneratorParser(path)
+a = parser.generators['file'].valid_value()
+
+with open('output.bmp', 'wb') as f:
+    f.write(a)

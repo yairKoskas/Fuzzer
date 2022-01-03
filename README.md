@@ -4,7 +4,7 @@ currently works ony on programs that gets a file path as a first argument.
 
 ## usage
 
-python3 src/main.py [path_to_executable] [corpus] [crash_folder] [times]
+python3 src/main_mutate.py [path_to_executable] [corpus] [crash_folder] [times]
 
 - path_to_executable - path to program to run.
 - corpus - path to directory with all the files to fuzz.
