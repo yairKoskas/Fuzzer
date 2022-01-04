@@ -1,4 +1,4 @@
-import generator_parser
+from file_generator import generator_parser
 import sys
 
 path = sys.argv[1]

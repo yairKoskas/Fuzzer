@@ -1,7 +1,7 @@
 import os
 import random
 
-from generator import Generator
+from file_generator.generator import Generator
 
 '''
 A generator for choosing random generator from a list.

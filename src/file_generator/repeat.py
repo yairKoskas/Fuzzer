@@ -1,6 +1,6 @@
 import random
 
-from generator import Generator
+from file_generator.generator import Generator
 
 '''
 A generator for repeating on a generator multiple times.

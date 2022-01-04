@@ -3,8 +3,8 @@
 		<int name="headerSize" size="4" value="40">
 			<relation type="size" target="father"/>
 		</int>
-		<int name="imgWidth" size="4" value="3"/>
-		<int name="imgHeight" size="4" value="3"/>
+		<int name="imgWidth" size="4" value="28"/>
+		<int name="imgHeight" size="4" value="28"/>
 		<int name="const" size="2" value="1"/>
 		<int name="bitsPerPixel" size="2" value="24"/>
 		<int name="compression" size="4" value="0"/>
@@ -27,6 +27,6 @@
 
 		<custom name="DIBHeaderField" type="DIBHeader"/>
 		
-		<data name="pixelArray" size="40"/>
+		<data name="pixelArray" size="4000"/>
 	</type>
 </file>

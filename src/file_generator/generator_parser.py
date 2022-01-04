@@ -1,6 +1,6 @@
 import xml.etree.ElementTree as Et
-from generator_factory import GeneratorFactory
-from generator import Generator
+from file_generator.generator_factory import GeneratorFactory
+from file_generator.generator import Generator
 from pathlib import Path
 
 

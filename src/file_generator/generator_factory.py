@@ -1,7 +1,7 @@
-import data
-import int
-import str
-import type
+from file_generator.primitives import data
+from file_generator.primitives import int
+from file_generator.primitives import str
+from file_generator import type
 
 mapping = {
     'int': int.Int,

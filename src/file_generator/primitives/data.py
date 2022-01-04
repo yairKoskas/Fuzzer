@@ -1,10 +1,14 @@
+import os
 import random
-import string
 
-from generator import Generator
+from file_generator.generator import Generator
+
+'''
+A generator for arbitrary data without certain structure.
+'''
 
 
-class Str(Generator):
+class Data(Generator):
     # maximum length of the default value
     MAX_LENGTH = 20
 
@@ -16,18 +20,16 @@ class Str(Generator):
     def valid_value(self):
         # if value is not specified, choose at random
         if self._size is not None:
-            size = self._size
+            size = int(self._size)
         else:
-            size = random.randint(0, Str.MAX_LENGTH + 1)
+            size = random.randint(0, Data.MAX_LENGTH + 1)
 
         # if value is not specified, choose at random
         if self._value is not None:
             return self._value.encode()
         else:
-            value = ''.join(random.choices(string.ascii_letters + string.digits, k=size))
-            return value.encode()
+            return os.urandom(size)
 
     def invalid_value(self):
-        size = random.randint(0, Str.MAX_LENGTH + 1)
-        value = ''.join(random.choices(string.ascii_letters + string.digits, k=size))
-        return value.encode()
+        size = random.randint(0, Data.MAX_LENGTH + 1)
+        return os.urandom(size)
