@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <xs:element name="file">
+        <xs:complexType>
+			<xs:choice minOccurs="1" maxOccurs="unbounded">
+				<xs:element ref="type" minOccurs="0" maxOccurs="unbounded"/>
+			</xs:choice>
+
+            <xs:attribute name="name" type="xs:string" use="required"/>
+		</xs:complexType>
+    </xs:element>
+
+    
+    <xs:element name="type">
+        <xs:complexType>
+            <xs:group ref="types" minOccurs="1" maxOccurs="unbounded"/>
+
+            <xs:attribute name="name" type="xs:string" use="required"/>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:complexType name="int">
+            <xs:choice minOccurs="0" maxOccurs="1">
+			    <xs:element name="relation" type="relation"/>
+		    </xs:choice>
+            
+            <xs:attribute name="name" type="xs:string" use="required"/>
+            <xs:attribute name="endian" type="xs:string"/>
+            <xs:attribute name="size" type="xs:integer" use="required"/>
+            <xs:attribute name="value" type="xs:integer"/>
+    </xs:complexType>
+
+    <xs:complexType name="str">
+            <xs:choice minOccurs="0" maxOccurs="1">
+			    <xs:element name="relation" type="relation"/>
+		    </xs:choice>
+            
+            <xs:attribute name="name" type="xs:string" use="required"/>
+            <xs:attribute name="size" type="xs:integer"/>
+            <xs:attribute name="value" type="xs:string"/>
+    </xs:complexType>
+
+    <xs:complexType name="data">
+            <xs:choice minOccurs="0" maxOccurs="1">
+			    <xs:element name="relation" type="relation"/>
+		    </xs:choice>
+            
+            <xs:attribute name="name" type="xs:string" use="required"/>
+            <xs:attribute name="size" type="xs:integer" use="required"/>
+            <xs:attribute name="value" type="xs:string"/>
+    </xs:complexType>
+
+    <xs:complexType name="custom">
+            <xs:attribute name="name" type="xs:string" use="required"/>
+            <xs:attribute name="type" type="xs:string" use="required"/>
+    </xs:complexType>
+
+    <xs:complexType name="relation">
+            <xs:attribute name="type" type="xs:string" use="required"/>
+            <xs:attribute name="target" type="xs:string" use="required"/>
+    </xs:complexType>
+
+
+    <xs:group name="types">
+		<xs:choice>
+			<xs:element name="int" type="int" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="str" type="str" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="data" type="data" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="custom" type="custom" minOccurs="0" maxOccurs="1"/>
+		</xs:choice>
+    </xs:group>
+</xs:schema>
