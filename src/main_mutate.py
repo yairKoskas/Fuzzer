@@ -1,7 +1,8 @@
-import mutation_fuzzer
+from fuzzers import mutation_fuzzer
 import mutators.bitflip_mutator as bitflip_mutator
 import mutators.bitinsert_mutator as bitinsert_mutator
 import mutators.combine_mutator as combine_mutator
+
 import sys
 import os
 

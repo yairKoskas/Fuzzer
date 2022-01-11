@@ -18,12 +18,12 @@
 	<type name="file">
 		<!-- header -->
 		<str name="magic" value="BM"/>
-		<int name="fileSize" size="4" value="94" endian="little">
+		<int name="fileSize" size="4" endian="little">
 			<relation type="size" target="father"/>
 		</int>
 		<data name="reserved1" size="2"/>
 		<data name="reserved2" size="2"/>
-		<int name="pixelArrayOffset" size="4" value="54"> <relation type="offset" target="pixelArray"/> </int>
+		<int name="pixelArrayOffset" size="4"> <relation type="offset" target="pixelArray"/> </int>
 
 		<custom name="DIBHeaderField" type="DIBHeader"/>
 		

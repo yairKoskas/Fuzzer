@@ -1,12 +1,13 @@
+from file_generator import field
 
 '''
 A class that holds information about relations.
 '''
 class Relation:
 
-    def __init__(self, type_of_relation, target_name) -> None:
-        self.type = type_of_relation
-        self.target = target_name
+    def __init__(self, type, target) -> None:
+        self.type = type
+        self.target = target
 
 '''
 An interface for generator.
@@ -34,13 +35,13 @@ class Generator:
     '''
     set the relation of the generator
     '''
-    def set_relation(self, relation: Relation):
+    def set_relation(self, relation: 'Relation'):
         self._has_relation = True
         self._relation = relation
 
     '''
     get the relation of the generator
     '''
-    def get_relation(self, relation: Relation):
+    def get_relation(self) -> 'Relation':
         if self._has_relation:
             return self._relation

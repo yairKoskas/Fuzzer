@@ -1,6 +1,6 @@
 import xml.etree.ElementTree as Et
 from file_generator.generator_factory import GeneratorFactory
-from file_generator.generator import Generator
+from file_generator.generator import Generator, Relation
 from pathlib import Path
 
 
@@ -42,5 +42,13 @@ class GeneratorParser:
 
         generator_class = GeneratorFactory.get_generator(xml_element.tag)
         if generator_class:
-            return generator_class(**xml_element.attrib)
+            gen = generator_class(**xml_element.attrib)
+
+            # add relation
+            for child in xml_element:
+                if child.tag == 'relation':
+                    gen.set_relation(Relation(**child.attrib))
+
+            return gen
+            
         return None

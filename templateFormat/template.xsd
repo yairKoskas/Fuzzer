@@ -29,6 +29,8 @@
             <xs:attribute name="endian" type="xs:string"/>
             <xs:attribute name="size" type="xs:integer" use="required"/>
             <xs:attribute name="value" type="xs:integer"/>
+            <xs:attribute name="min_val" type="xs:integer"/>
+            <xs:attribute name="max_val" type="xs:integer"/>
     </xs:complexType>
 
     <xs:complexType name="str">

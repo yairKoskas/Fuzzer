@@ -3,7 +3,8 @@ import sys
 
 path = sys.argv[1]
 parser = generator_parser.GeneratorParser(path)
-a = parser.generators['file'].valid_value()
+a = parser.generators['file'].get_field()
+a.set_to_relation()
 
 with open('output.bmp', 'wb') as f:
-    f.write(a)
+    f.write(a.value())
