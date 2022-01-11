@@ -27,24 +27,19 @@ class GeneratorFuzzer:
     returns - True if fuzzed file caused crash and False otherwise
     '''
 
-    def fuzz_file(self, file: str):
-        if not os.path.isfile(file):
-            raise Exception('File doesn\'t exist')
-
-        with open(file, 'rb') as f:
-            content = f.read()
+    def fuzz_once(self):
 
         # temporary file to save fuzzed files at
         temp_file = './temp'
 
         with open(temp_file, 'wb') as f:
-            temp = b''
-            for gen in self.parser.generators:
-                if random.randint(0, 2):
-                    temp += self.parser.generators[gen].valid_value()
-                else:
-                    temp += self.parser.generators[gen].invalid_value()
-            f.write(temp)
+            file = self.parser.generators['file'].get_field()
+
+            # mutate the file
+            for i in range(random.randint(0,3)):
+                file.mutate()
+
+            f.write(file.value())
 
         retcode = self.runner.run(self.program, [temp_file])
 
@@ -60,19 +55,19 @@ class GeneratorFuzzer:
 
         return False
 
+
     '''
-    fuzz a whole corpus
+    fuzz multiple times
 
     parameters:
-    corpus - path to folder where the corpus files are
-    times - number of times to fuzz the corpus
+    times - number of times to generate file
     '''
 
-    def fuzz_corpus(self, corpus: str, times: int):
-        for _ in range(times):
-            for file in os.listdir(corpus):
+    def fuzz_multiple(self, times: int):
+        if times == 'inf':
+            while True:
+                self.fuzz_once()
 
-                file = os.fsdecode(file)
-                path = os.path.join(corpus, file)
-                if os.path.isfile(path):
-                    self.fuzz_file(path)
+        else:
+            for _ in range(times):
+                self.fuzz_once()

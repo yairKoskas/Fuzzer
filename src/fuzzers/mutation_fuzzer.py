@@ -22,6 +22,7 @@ class MutationFuzzer:
     '''
 
     def fuzz_file(self, file: str):
+        print(f'fuzzing {file}')
         if not os.path.isfile(file):
             raise Exception('File doesn\'t exist')
 
@@ -57,10 +58,20 @@ class MutationFuzzer:
     '''
 
     def fuzz_corpus(self, corpus: str, times: int):
-        for _ in range(times):
-            for file in os.listdir(corpus):
+        if times == 'inf':
+            while True:
+                for file in os.listdir(corpus):
 
-                file = os.fsdecode(file)
-                path = os.path.join(corpus, file)
-                if os.path.isfile(path):
-                    self.fuzz_file(path)
+                    file = os.fsdecode(file)
+                    path = os.path.join(corpus, file)
+                    if os.path.isfile(path):
+                        self.fuzz_file(path)
+
+        else:
+            for _ in range(times):
+                for file in os.listdir(corpus):
+
+                    file = os.fsdecode(file)
+                    path = os.path.join(corpus, file)
+                    if os.path.isfile(path):
+                        self.fuzz_file(path)

@@ -17,7 +17,7 @@ def main():
     if len(sys.argv) > 4:
         times = int(sys.argv[4])
     else:
-        times = 1
+        times = 'inf'
 
     if not os.path.isfile(program) or not os.access(program, os.X_OK):
         print('File doesn\'t exist or isn\'t executable')
