@@ -1,14 +1,15 @@
 import xml.etree.ElementTree as Et
+
 from file_generator.generator_factory import GeneratorFactory
 from file_generator.generator import Generator, Relation
 from pathlib import Path
 
 
 class GeneratorParser:
-
     """
     path - the path to the template format xml file
     """
+
     def __init__(self, path: Path):
         # will throw ParseError if path isn't a valid xml file
         self.xml_tree = Et.parse(path)
@@ -24,7 +25,8 @@ class GeneratorParser:
     get a generator for an xml element
     returns - a generator
     '''
-    def get_generator(self, xml_element: Et.Element) ->  Generator:
+
+    def get_generator(self, xml_element: Et.Element) -> Generator:
         if xml_element.tag == 'type':
             generators = []
             for child in xml_element:
