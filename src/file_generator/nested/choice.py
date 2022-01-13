@@ -1,27 +1,22 @@
-import os
 import random
 
+from file_generator.field import Field
 from file_generator.generator import Generator
 
 '''
 A generator for choosing random generator from a list.
 '''
-
-
-class Choice(Generator):
+class ChoiceGenerator(Generator):
     '''
     generators - list of generators
     '''
-
-    def __init__(self, generators: list):
+    def __init__(self, generators: list, name=None):
+        super().__init__(name)
+        self.name = name
         self._generators = generators
 
-    def valid_value(self):
+
+    def get_field(self) -> Field:
         gen = random.choice(self._generators)
 
-        return gen.valid_value()
-
-    def invalid_value(self):
-        gen = random.choice(self._generators)
-
-        return gen.invalid_value()
+        return gen.get_field()

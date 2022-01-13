@@ -57,5 +57,5 @@ class IntGenerator(Generator):
 
         return value
 
-    def get_field(self) -> bytes:
+    def get_field(self):
         return Int(self._name, self._size, self._endian,self._valid_value(), self._relation)
