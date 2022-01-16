@@ -6,7 +6,7 @@ import os
 
 def main():
     if len(sys.argv) < 4:
-        print('Usage: python3 main.py [path_to_executable] [corpus] [crash_folder] [times]')
+        print('Usage: python3 main.py [path_to_executable] [template file] [crash_folder] [times]')
         return -1
 
     program, template_file, crash_folder = sys.argv[1], sys.argv[2], sys.argv[3]

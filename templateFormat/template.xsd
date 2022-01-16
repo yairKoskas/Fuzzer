@@ -49,8 +49,10 @@
 		    </xs:choice>
             
             <xs:attribute name="name" type="xs:string" use="required"/>
-            <xs:attribute name="size" type="xs:integer" use="required"/>
+            <xs:attribute name="size" type="xs:integer"/>
             <xs:attribute name="value" type="xs:string"/>
+            <xs:attribute name="max_size" type="xs:integer"/>
+            <xs:attribute name="min_size" type="xs:integer"/>
     </xs:complexType>
 
     <xs:complexType name="custom">
@@ -63,13 +65,29 @@
             <xs:attribute name="target" type="xs:string" use="required"/>
     </xs:complexType>
 
+    <xs:complexType name="choice">
+        <xs:group ref="types" minOccurs="1" maxOccurs="unbounded"/>
+
+        <xs:attribute name="name" type="xs:string" use="required"/>
+    </xs:complexType>
+
+    <xs:complexType name="repeat">
+        <xs:group ref="types" minOccurs="1" maxOccurs="1"/>
+
+        <xs:attribute name="name" type="xs:string" use="required"/>
+        <xs:attribute name="times" type="xs:integer"/>
+        <xs:attribute name="min_times" type="xs:integer"/>
+        <xs:attribute name="max_times" type="xs:integer"/>
+    </xs:complexType>
 
     <xs:group name="types">
-		<xs:choice>
-			<xs:element name="int" type="int" minOccurs="0" maxOccurs="1"/>
-			<xs:element name="str" type="str" minOccurs="0" maxOccurs="1"/>
+	<xs:choice>
+            <xs:element name="int" type="int" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="str" type="str" minOccurs="0" maxOccurs="1"/>
             <xs:element name="data" type="data" minOccurs="0" maxOccurs="1"/>
             <xs:element name="custom" type="custom" minOccurs="0" maxOccurs="1"/>
-		</xs:choice>
+            <xs:element name="repeat" type="repeat" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="choice" type="choice" minOccurs="0" maxOccurs="1"/>
+	</xs:choice>
     </xs:group>
 </xs:schema>

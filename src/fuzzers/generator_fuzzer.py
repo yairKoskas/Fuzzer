@@ -34,6 +34,7 @@ class GeneratorFuzzer:
 
         with open(temp_file, 'wb') as f:
             file = self.parser.generators['file'].get_field()
+            file.set_to_relation()
 
             # mutate the file
             for i in range(random.randint(0,3)):

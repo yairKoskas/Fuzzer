@@ -36,18 +36,21 @@ class DataGenerator(Generator):
     # maximum length of the default value
     MAX_LENGTH = 20
 
-    def __init__(self, size=None, name=None, value=None):
+    def __init__(self, size=None, name=None, value=None, min_size=None, max_size=None):
         super().__init__(name)
         self.name = name
         self._value = value
         self._size = size
+
+        self._max_size = int(max_size) if max_size is not None else DataGenerator.MAX_LENGTH
+        self._min_size = int(min_size) if min_size is not None else 0
 
     def _valid_value(self):
         # if value is not specified, choose at random
         if self._size is not None:
             size = int(self._size)
         else:
-            size = random.randint(0, DataGenerator.MAX_LENGTH + 1)
+            size = random.randint(self._min_size, self._max_size)
 
         # if value is not specified, choose at random
         if self._value is not None:
