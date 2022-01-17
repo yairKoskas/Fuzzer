@@ -1,0 +1,20 @@
+<file name="png">
+    <type name="chunk">
+        <int name="chunk_length" size="4" endian="big">
+            <relation type="size" target="chunk_data"/>
+        </int>
+        <str name="chunk_type" size="4"/>
+        <data name="chunk_data"/>
+        <data name="chunk_crc" size="4">
+            <relation type="crc32" target="chunk_type||chunk_data"/>
+        </data>
+    </type>
+
+    <type name="file">
+        <!--magic value-->
+        <str name="magic" value="hex::89504E470D0A1A0A"/>
+        <!--header chunk-->
+        <custom type="chunk" name="header_chunk" chunk_type="IHDR"/>
+        <array type="chunk"/>
+    </type>
+</file>
