@@ -15,7 +15,7 @@ python3 src/main_mutate.py [path_to_executable] [corpus] [crash_folder] [times]
 
 ### generation fuzzing
 
-python3 src/main_mutate.py [path_to_executable] [temaplate_file] [crash_folder] [times]
+python3 src/main_generate.py [path_to_executable] [temaplate_file] [crash_folder] [times]
 
 - path_to_executable - path to program to run.
 - corpus - path to directory with all the files to fuzz.

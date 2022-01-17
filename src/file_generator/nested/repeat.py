@@ -54,9 +54,9 @@ class RepeatGenerator(Generator):
         super().__init__(name)
         self.name = name
         self._generator = generator
-        self._times = times
-        self._max_times = max_times if max_times is not None else RepeatGenerator.MAX_TIMES
-        self._min_times = min_times if min_times is not None else 0
+        self._times = int(times) if times is not None else None
+        self._max_times = int(max_times) if max_times is not None else RepeatGenerator.MAX_TIMES
+        self._min_times = int(min_times) if min_times is not None else 0
 
     def get_field(self) -> bytes:
         times = self._times if self._times is not None else random.randint(self._min_times, self._max_times)
