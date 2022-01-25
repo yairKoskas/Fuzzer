@@ -1,7 +1,7 @@
 import os
 import sys
 import signal
-from subprocess import Popen, PIPE
+import subprocess
 
 class Runner:
 
@@ -18,8 +18,7 @@ class Runner:
         if not os.path.isfile(path) or not os.access(path, os.X_OK):
             raise Exception('File doesn\'t exist or isn\'t executable')
 
-        proc = Popen([path] + args, stdout=PIPE, stdin=PIPE, stderr=PIPE)
+        proc = subprocess.Popen([path] + args, stdout=subprocess.PIPE, stdin=subprocess.PIPE, stderr=subprocess.PIPE)
         stdout_data, stderr_data = proc.communicate()    # currently not supporting user input
         proc.poll()
         return proc.returncode
-        
