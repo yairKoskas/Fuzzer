@@ -50,15 +50,15 @@ class RepeatGenerator(Generator):
     max_times - maximum numbers of times to repeat duplicate the generator.
     min_times - minimum numbers of times to repeat duplicate the generator.
     '''
-    def __init__(self, generator: Generator, name=None, times=None, max_times=None, min_times=None):
+    def __init__(self, generator: Generator, name=None, times=None, max_times=MAX_TIMES, min_times=0):
         super().__init__(name)
         self.name = name
         self._generator = generator
-        self._times = int(times) if times is not None else None
-        self._max_times = int(max_times) if max_times is not None else RepeatGenerator.MAX_TIMES
-        self._min_times = int(min_times) if min_times is not None else 0
+        self._times = times
+        self._max_times = max_times
+        self._min_times = min_times
 
     def get_field(self) -> bytes:
-        times = self._times if self._times is not None else random.randint(self._min_times, self._max_times)
+        times = int(self._times) if self._times is not None else random.randint(int(self._min_times), int(self._max_times))
         fields = [self._generator.get_field() for _ in range(times)]
         return Repeat(self._name, fields)

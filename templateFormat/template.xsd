@@ -1,10 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <!-- int or var attribute-->
+    <xs:simpleType name="intOrVar">
+      <xs:restriction base="xs:string">
+        <xs:pattern value="\d+|var:.+"/>
+      </xs:restriction>
+    </xs:simpleType>
+
     <xs:element name="file">
         <xs:complexType>
 			<xs:choice minOccurs="1" maxOccurs="unbounded">
 				<xs:element ref="type" minOccurs="0" maxOccurs="unbounded"/>
+                <xs:element ref="var" minOccurs="0" maxOccurs="unbounded"/>
 			</xs:choice>
 
             <xs:attribute name="name" type="xs:string" use="required"/>
@@ -20,6 +28,20 @@
         </xs:complexType>
     </xs:element>
 
+    <xs:complexType name="block">
+        <xs:group ref="types" minOccurs="1" maxOccurs="unbounded"/>
+
+        <xs:attribute name="name" type="xs:string" use="required"/>
+    </xs:complexType>
+
+    <xs:element name="var">
+        <xs:complexType>
+            <xs:attribute name="name" type="xs:string" use="required"/>
+            <xs:attribute name="max_val" type="xs:integer"/>
+            <xs:attribute name="min_val" type="xs:integer"/>
+        </xs:complexType>
+    </xs:element>
+
     <xs:complexType name="int">
             <xs:choice minOccurs="0" maxOccurs="1">
 			    <xs:element name="relation" type="relation"/>
@@ -27,10 +49,10 @@
             
             <xs:attribute name="name" type="xs:string" use="required"/>
             <xs:attribute name="endian" type="xs:string"/>
-            <xs:attribute name="size" type="xs:integer" use="required"/>
-            <xs:attribute name="value" type="xs:integer"/>
-            <xs:attribute name="min_val" type="xs:integer"/>
-            <xs:attribute name="max_val" type="xs:integer"/>
+            <xs:attribute name="size" type="intOrVar" use="required"/>
+            <xs:attribute name="value" type="intOrVar"/>
+            <xs:attribute name="min_val" type="intOrVar"/>
+            <xs:attribute name="max_val" type="intOrVar"/>
     </xs:complexType>
 
     <xs:complexType name="str">
@@ -39,8 +61,10 @@
 		    </xs:choice>
             
             <xs:attribute name="name" type="xs:string" use="required"/>
-            <xs:attribute name="size" type="xs:integer"/>
+            <xs:attribute name="size" type="intOrVar"/>
             <xs:attribute name="value" type="xs:string"/>
+            <xs:attribute name="max_size" type="intOrVar"/>
+            <xs:attribute name="min_size" type="intOrVar"/>
     </xs:complexType>
 
     <xs:complexType name="data">
@@ -49,10 +73,16 @@
 		    </xs:choice>
             
             <xs:attribute name="name" type="xs:string" use="required"/>
-            <xs:attribute name="size" type="xs:integer"/>
+            <xs:attribute name="size" type="intOrVar"/>
             <xs:attribute name="value" type="xs:string"/>
-            <xs:attribute name="max_size" type="xs:integer"/>
-            <xs:attribute name="min_size" type="xs:integer"/>
+            <xs:attribute name="max_size" type="intOrVar"/>
+            <xs:attribute name="min_size" type="intOrVar"/>
+    </xs:complexType>
+
+    <xs:complexType name="padding">
+            <xs:attribute name="name" type="xs:string" use="required"/>
+            <xs:attribute name="value" type="intOrVar"/>
+            <xs:attribute name="multiple_of" type="intOrVar"/>
     </xs:complexType>
 
     <xs:complexType name="custom">
@@ -75,9 +105,9 @@
         <xs:group ref="types" minOccurs="1" maxOccurs="1"/>
 
         <xs:attribute name="name" type="xs:string" use="required"/>
-        <xs:attribute name="times" type="xs:integer"/>
-        <xs:attribute name="min_times" type="xs:integer"/>
-        <xs:attribute name="max_times" type="xs:integer"/>
+        <xs:attribute name="times" type="intOrVar"/>
+        <xs:attribute name="min_times" type="intOrVar"/>
+        <xs:attribute name="max_times" type="intOrVar"/>
     </xs:complexType>
 
     <xs:group name="types">
@@ -88,6 +118,8 @@
             <xs:element name="custom" type="custom" minOccurs="0" maxOccurs="1"/>
             <xs:element name="repeat" type="repeat" minOccurs="0" maxOccurs="1"/>
             <xs:element name="choice" type="choice" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="block" type="block" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="padding" type="padding" minOccurs="0" maxOccurs="1"/>
 	</xs:choice>
     </xs:group>
 </xs:schema>

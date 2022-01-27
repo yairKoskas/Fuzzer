@@ -14,12 +14,9 @@ def main():
 
     pars = generator_parser.GeneratorParser(template_file)
 
-    content = pars.generators['file'].get_field()
-    content.set_to_relation()
+    creator = pars.get_creator()
     with open(f'output.{extension}', 'wb') as f:
-        f.write(content.value())
-
-    
+        f.write(creator.create_file(0))
 
 
 if __name__ == "__main__":

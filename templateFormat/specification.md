@@ -1,47 +1,73 @@
 # Input template format specification
 
-### Defining data types
-You can define your own data types by using the tag `type`, it only requires the `name` propery. The Structure of the file itself can be defined by `file`, there should be only 1 `file` tag.<br />
+## structure of the file
+The root of the xml must be `<file name="filename">`. Inside the `<file>` tag you can define variables and custom types.
+The last `type` tag must have the name `file` and represents the whole file (this is what will be generated).<br>
 example:
 ```xml
-<type name="type1">
-    <!-- some data -->
-</type>
-
-<type name="type2">
-    <!-- some data -->
-</type>
-
 <file name="fileFormat">
+    <var name="var1" .../>
+    <var name="var2" .../>
 
-    <!-- some data -->
+    <type name="type1">
+        <!-- some data -->
+    </type>
+
+    <type name="type2">
+        <!-- some data -->
+    </type>
+
+    <!-- the file structure -->
+    <type name="file">
+        <!-- some data -->
+    </type>
 
 </file>
 ```
 
-### Using predefined data types
-There are a few basic types you can use to specify the fields in the format:
-- `int` - a number.
-- `str`- a string.
-- `data` - arbitrary data with no clear structure.
+## Using primitive types
+There are a few basic types you can use to specify the fields in the format. Every field is required to have the name attribute.<br>
 
-Each of the tags can have the following attributes:
-- `name` - name of the field.
-- `size` - size of the field in bytes (optimal).
-- `value` - value of the field (optimal).
-- TODO: add more types
+### int
+`int` represents a field with numerical value.<br>
+Attributes:
+- `size`: size of the integer in bytes (required).
+- `value`: value of the integer.
+- `min_val`: minimum value of the integer (meaningless if `value` is given).
+- ``max_val`: maximum value of the integer (meaningless if `value` is given).
+- ``endian`: endian - must be `little` or `big` (default is `little`).
 
-Additionally, You can use user defined types with `custom` tag. The `custom` tag only have the `name` attribute and the `type` attribute (whoch specify the name of the type).<br />
-Example:
+Example
 ```xml
-<type name="type2">
-    <str name="aString" value="ABCD">
-    <int name="aNumber" value="70" size="4">
-    <int name="anotherNumber" size="2">
-    <data name="fileContent">
-    <custom name="usingType1" type="type1">
-</type>
+<int name="name" size="4" max_val="20" endian='big'/>
 ```
+
+### str
+`str` represents an ascii string.<br>
+Attributes:
+- `size`: size of the string in bytes.
+- `value`: value of the string.
+- `min_size`: minimum value of the string (meaningless if `size` is given).
+- `max_size`: maximum value of the string (meaningless if `size` is given, default value is 20).
+
+Example
+```xml
+<str name="name" size="4"/>
+```
+
+### data
+`data` represents an arbirary binary data without certain structure.<br>
+Attributes:
+- `size`: size of the data in bytes.
+- `value`: value of the data (as a hex string).
+- `min_size`: minimum value of the data (meaningless if `size` is given).
+- `max_size`: maximum value of the data (meaningless if `size` is given, default value is 20).
+
+Example
+```xml
+<data name="name" value="deadbeef"/>
+```
+
 
 ### Relations
 You can set the value of a `str` or `int` tag to be a relation, i.e be dependent on another field. A relation can be defined woth the `relation` tag. A relation tag should have `type` attribute, which specify the kind of relation, and `target`, which specify the name of the field to relate to.<br />

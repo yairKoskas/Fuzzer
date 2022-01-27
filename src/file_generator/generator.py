@@ -1,3 +1,4 @@
+from dataclasses import Field
 from file_generator import field
 
 '''
@@ -23,13 +24,13 @@ class Generator:
     '''
     return field object with a valid value.
     '''
-    def get_field(self):
+    def get_field(self) -> Field:
         pass
 
     '''
     return True if the object has a relation
     '''
-    def has_relation(self):
+    def has_relation(self) -> bool:
         return self._has_relation
 
     '''
