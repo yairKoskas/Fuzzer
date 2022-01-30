@@ -51,7 +51,7 @@ class IntGenerator(Generator):
         if self._value is not None:
             value = int(self._value)
         else:
-            max_val = int(self._max_val) if self._max_val is not None else 256**int(self._size)
+            max_val = int(self._max_val) if self._max_val is not None else 256**int(self._size) - 1
             value = random.randint(int(self._min_val),max_val)
 
         return value
