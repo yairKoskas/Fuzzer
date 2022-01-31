@@ -28,8 +28,9 @@ class Repeat(ParentField):
 
     def mutate(self):
         # mutate random field
-        idx = random.randint(0,len(self._children)-1)
-        self._children[idx].mutate()
+        if len(self._children) > 0:
+            idx = random.randint(0,len(self._children)-1)
+            self._children[idx].mutate()
 
     def resolve_relation(self, relation):
         return self._parent.resolve_relation(relation)
