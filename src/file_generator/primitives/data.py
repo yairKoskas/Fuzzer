@@ -28,7 +28,7 @@ class Data(Field):
         # replace random char
         idx = random.randrange(0,len(self._value))
         new_value = list(self._value)
-        new_value[idx] = random.randint(0,256)
+        new_value[idx] = random.randint(0,255)
         self._value = bytes(new_value)
 
 
