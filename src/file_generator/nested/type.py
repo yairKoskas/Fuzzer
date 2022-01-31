@@ -29,8 +29,9 @@ class Type(ParentField):
 
     def mutate(self):
         # mutate random field
-        idx = random.randint(0,len(self._children)-1)
-        self._children[idx].mutate()
+        if len(self._children) > 0:
+            idx = random.randint(0,len(self._children)-1)
+            self._children[idx].mutate()
 
     # return the size of an element by name
     def _get_size_by_name(self, name):
