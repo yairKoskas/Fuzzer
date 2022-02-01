@@ -1,4 +1,5 @@
 import os
+from pdb import runeval
 import sys
 import signal
 import subprocess
@@ -19,6 +20,14 @@ class Runner:
             raise Exception('File doesn\'t exist or isn\'t executable')
 
         proc = subprocess.Popen([path] + args, stdout=subprocess.PIPE, stdin=subprocess.PIPE, stderr=subprocess.PIPE)
-        stdout_data, stderr_data = proc.communicate()    # currently not supporting user input
-        proc.poll()
+        # wait for process to finish, if it didn't finish in a certain amout of time, terminate it.
+        try:
+            pass
+            proc.wait(5)
+        except subprocess.TimeoutExpired:
+            proc.kill()
+            proc.wait()
+            return 1
+
+        proc.wait()
         return proc.returncode
