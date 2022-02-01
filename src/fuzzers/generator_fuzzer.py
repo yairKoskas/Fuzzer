@@ -21,6 +21,7 @@ class GeneratorFuzzer:
         self.runner = runner.Runner()
 
         self.parser = GeneratorParser(self.template_format)
+        self.file_creator = self.parser.get_creator()
 
     '''
     fuzz a specific file
@@ -28,19 +29,11 @@ class GeneratorFuzzer:
     '''
 
     def fuzz_once(self):
-
         # temporary file to save fuzzed files at
         temp_file = './temp'
 
         with open(temp_file, 'wb') as f:
-            file = self.parser.generators['file'].get_field()
-            file.set_to_relation()
-
-            # mutate the file
-            for i in range(random.randint(0,3)):
-                file.mutate()
-
-            f.write(file.value())
+            f.write(self.file_creator.create_file(random.randrange(0,5)))
 
         retcode = self.runner.run(self.program, [temp_file])
 
