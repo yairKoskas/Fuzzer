@@ -26,10 +26,11 @@ class Data(Field):
 
     def mutate(self):
         # replace random char
-        idx = random.randrange(0,len(self._value))
-        new_value = list(self._value)
-        new_value[idx] = random.randint(0,255)
-        self._value = bytes(new_value)
+        if len(self._value) > 0:
+            idx = random.randrange(0,len(self._value))
+            new_value = list(self._value)
+            new_value[idx] = random.randint(0,255)
+            self._value = bytes(new_value)
 
 
 class DataGenerator(Generator):
