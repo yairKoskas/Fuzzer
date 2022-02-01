@@ -10,9 +10,9 @@ class Padding(Field):
 
     '''
     value - value to padd with.
-    multiple_of - padd until a the size until the padding is a multiple of multiple_of.
+    alignment - padd until a the size until the padding is a multiple of multiple_of.
     '''
-    def __init__(self, name, multiple_of, value):
+    def __init__(self, name, alignment, value):
         super().__init__(name)
 
         # set has_relation since set_to_relation have to called on this
@@ -21,7 +21,7 @@ class Padding(Field):
         self._size = 0
         self.name = name
         self._value = value
-        self._multiple_of = multiple_of
+        self._alignment = alignment
 
     def __len__(self):
         return self._size
@@ -33,7 +33,7 @@ class Padding(Field):
         # get offset of self
         rel = Relation('offset', self.name)
         offset = self._parent.resolve_relation(rel)
-        self._size = (-offset) % self._multiple_of
+        self._size = (-offset) % self._alignment
 
     def mutate(self):
         pass
@@ -42,13 +42,13 @@ class Padding(Field):
 class PaddingGenerator(Generator):
     '''
     value - value to padd with.
-    multiple_of - padd until a the size until the padding is a multiple of multiple_of.
+    alignment - padd until a the size until the padding is a multiple of multiple_of.
     '''
-    def __init__(self, multiple_of, name=None, value=0):
+    def __init__(self, alignment, name=None, value=0):
         super().__init__(name) 
         self.name = name
         self._value = value
-        self._multiple_of = multiple_of
+        self._alignment = alignment
 
     def get_field(self):
-        return Padding(self._name, int(self._multiple_of), int(self._value))
+        return Padding(self._name, int(self._alignment), int(self._value))

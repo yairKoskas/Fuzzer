@@ -82,7 +82,7 @@
     <xs:complexType name="padding">
             <xs:attribute name="name" type="xs:string" use="required"/>
             <xs:attribute name="value" type="intOrVar"/>
-            <xs:attribute name="multiple_of" type="intOrVar"/>
+            <xs:attribute name="alignment" type="intOrVar"/>
     </xs:complexType>
 
     <xs:complexType name="custom">
