@@ -4,6 +4,7 @@ from file_generator.generator_factory import GeneratorFactory
 from file_generator.generator import Generator, Relation
 from file_generator.nested import type, choice, repeat
 from file_generator import var
+from file_generator import var_expression
 from file_generator import file_creator
 from pathlib import Path
 
@@ -64,12 +65,9 @@ class GeneratorParser:
         # replace 'var:x' attributes with the corresponding variable
         for attr in res:
             if res[attr].startswith('var:'):
-                var_name = res[attr].split(':')[1]
+                expression = res[attr].split(':')[1]
 
-                if var_name in self._vars:
-                    res[attr] = self._vars[var_name]
-                else:
-                    raise Exception(f'variable {var_name} is not defined')
+                res[attr] = var_expression.VarExpression(expression, self._vars)
 
         return res
     
