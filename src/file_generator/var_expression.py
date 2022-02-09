@@ -6,11 +6,18 @@ so it will be read from a dictionary. "name" will be be tranformes to:
 "int(self.vars['name'])"
 '''
 class VarTransformer(ast.NodeTransformer):
+    def __init__(self, vars) -> None:
+        super().__init__()
+        self._vars = vars
 
     '''
     modify a name node from "<name>" to "int(self._vars['<name>'])"
     '''
     def visit_Name(self, node):
+        # make sure the variable exists
+        if node.id not in self._vars:
+            raise Exception(f'variable {node.id} is not defined')
+
         # self.vars
         self_vars = ast.Attribute(value=ast.Name(id='self', ctx=ast.Load()), attr='_vars', ctx=ast.Load())
 
@@ -38,7 +45,7 @@ class VarExpression:
         self._vars = vars
         exp = ast.parse(expression, mode='eval')
         # swich each appearence of variable like "var" with "int(self._vars['var'])"
-        transformer = VarTransformer()
+        transformer = VarTransformer(vars)
         self._exp = transformer.visit(exp)
 
         # compile the new expression
@@ -49,4 +56,4 @@ class VarExpression:
     '''
     def __int__(self) -> int:
         return eval(self._exp)
-        
+
