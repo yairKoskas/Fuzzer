@@ -163,6 +163,7 @@ Varibales defined by the name `var` at the start of a file and have the followin
 - `min_val` - minimal value of the element.
 
 A variable can be used by giving `var:varname` as an attribute to any attribute that accepts integers.
+You can also use variables with expressions containing python arithmetic operators, for example `var:var1*var2+3`.
 
 Example:
 ```xml
