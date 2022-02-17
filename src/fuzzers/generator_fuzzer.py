@@ -13,7 +13,8 @@ class GeneratorFuzzer:
         crash_folder - folder to save the files that casued crash
         """
 
-    def __init__(self, program: Path, template_format: Path, crash_folder: Path, timeout: int):
+    def __init__(self, program: Path, template_format: Path, crash_folder: Path, timeout: int, extension: str):
+        self.extension = extension
         self.timeout = timeout
         self.template_format = template_format
         self.program = program
@@ -31,7 +32,7 @@ class GeneratorFuzzer:
 
     def fuzz_once(self):
         # temporary file to save fuzzed files at
-        temp_file = './temp'
+        temp_file = f'./temp.{self.extension}'
 
         with open(temp_file, 'wb') as f:
             f.write(self.file_creator.create_file(random.randrange(0,5)))

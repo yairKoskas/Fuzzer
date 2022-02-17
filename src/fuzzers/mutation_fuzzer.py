@@ -9,7 +9,8 @@ class MutationFuzzer:
     crash_folder - folder to save the files that casued crash
     """
 
-    def __init__(self, program: str, mutator, crash_folder: str, timeout: int):
+    def __init__(self, program: str, mutator, crash_folder: str, timeout: int, extension: str):
+        self.extension = extension
         self.timeout = timeout
         self.mutator = mutator
         self.program = program
@@ -30,7 +31,7 @@ class MutationFuzzer:
             content = f.read()
 
         # temporary file to save fuzzed files at
-        temp_file = './temp'
+        temp_file = f'./temp.{self.extension}'
 
         with open(temp_file, 'wb') as f:
             f.write(self.mutator.mutate(content))
