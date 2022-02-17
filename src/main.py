@@ -16,7 +16,7 @@ main function for generation fuzzing
 '''
 def main_generate(args):
     template_file = args.input
-    fuzzer = generator_fuzzer.GeneratorFuzzer(args.program, template_file, args.crash_folder)
+    fuzzer = generator_fuzzer.GeneratorFuzzer(args.program, template_file, args.crash_folder, args.timeout)
     fuzzer.fuzz_multiple(args.times if args.times >= 0 else 'inf')
 
 '''
@@ -28,7 +28,7 @@ def main_mutate(args):
     mutator = combine_mutator.CombinetMutator(
         [bitinsert_mutator.BitInsertMutator(), bitflip_mutator.BitFlippingMutator()])
 
-    fuzzer = mutation_fuzzer.MutationFuzzer(args.program, mutator, args.crash_folder)
+    fuzzer = mutation_fuzzer.MutationFuzzer(args.program, mutator, args.crash_folder, args.timeout)
     fuzzer.fuzz_corpus(corpus, args.times if args.times >= 0 else 'inf')
 
 def main():

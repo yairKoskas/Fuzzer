@@ -15,7 +15,7 @@ class Runner:
 
     returns: the return code of the program.
     '''
-    def run(self, path, args):
+    def run(self, path, args, timeout):
         if not os.path.isfile(path) or not os.access(path, os.X_OK):
             raise Exception('File doesn\'t exist or isn\'t executable')
 
@@ -23,7 +23,7 @@ class Runner:
         # wait for process to finish, if it didn't finish in a certain amout of time, terminate it.
         try:
             pass
-            proc.wait(5)
+            proc.wait(timeout)
         except subprocess.TimeoutExpired:
             proc.kill()
             proc.wait()
