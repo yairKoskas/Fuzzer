@@ -16,7 +16,7 @@ main function for generation fuzzing
 '''
 def main_generate(args):
     template_file = args.input
-    fuzzer = generator_fuzzer.GeneratorFuzzer(args.program, template_file, args.crash_folder, args.timeout, args.extension)
+    fuzzer = generator_fuzzer.GeneratorFuzzer(args.program, template_file, args.crash_folder, args.timeout, args.extension, args.args)
     fuzzer.fuzz_multiple(args.times if args.times >= 0 else 'inf')
 
 '''
@@ -28,7 +28,7 @@ def main_mutate(args):
     mutator = combine_mutator.CombinetMutator(
         [bitinsert_mutator.BitInsertMutator(), bitflip_mutator.BitFlippingMutator()])
 
-    fuzzer = mutation_fuzzer.MutationFuzzer(args.program, mutator, args.crash_folder, args.timeout, args.extension)
+    fuzzer = mutation_fuzzer.MutationFuzzer(args.program, mutator, args.crash_folder, args.timeout, args.extension, args.args)
     fuzzer.fuzz_corpus(corpus, args.times if args.times >= 0 else 'inf')
 
 def main():
@@ -47,6 +47,9 @@ def main():
                         help='path to corpus directory or template format file.')
     main_parser.add_argument('-e', '--extension', type=str, default='txt',
                         help='extension of the input files.')
+    main_parser.add_argument('-a', '--args', type=str, nargs='+', default=['*'],
+                        help='arguments to pass to the target program. \"<fuzzed>\" will be replaced by the fuzzed file.')
+
 
     args = main_parser.parse_args()
 

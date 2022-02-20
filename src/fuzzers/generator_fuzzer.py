@@ -13,8 +13,7 @@ class GeneratorFuzzer:
         crash_folder - folder to save the files that casued crash
         """
 
-    def __init__(self, program: Path, template_format: Path, crash_folder: Path, timeout: int, extension: str):
-        self.extension = extension
+    def __init__(self, program: Path, template_format: Path, crash_folder: Path, timeout: int, extension: str, args: list):
         self.timeout = timeout
         self.template_format = template_format
         self.program = program
@@ -25,23 +24,26 @@ class GeneratorFuzzer:
         self.parser = GeneratorParser(self.template_format)
         self.file_creator = self.parser.get_creator()
 
+        # temporary file to save fuzzed files at
+        self.temp_file = f'./temp.{extension}'
+
+        # args to the target program
+        self.args = [arg if arg != '<fuzzed>' else self.temp_file for arg in args]
     '''
     fuzz a specific file
     returns - True if fuzzed file caused crash and False otherwise
     '''
 
     def fuzz_once(self):
-        # temporary file to save fuzzed files at
-        temp_file = f'./temp.{self.extension}'
-
-        with open(temp_file, 'wb') as f:
+        
+        with open(self.temp_file, 'wb') as f:
             f.write(self.file_creator.create_file(random.randrange(0,5)))
 
-        retcode = self.runner.run(self.program, [temp_file], self.timeout)
+        retcode = self.runner.run(self.program, self.args, self.timeout)
 
         # copy content to the crashed folder if neccesary
         if retcode != 0 and retcode != 1:
-            with open(temp_file, 'rb') as f1:
+            with open(self.temp_file, 'rb') as f1:
                 crash_path = os.path.join(self.crash_folder, str(self.crashes))
                 self.crashes += 1
                 with open(crash_path, 'wb') as f2:
