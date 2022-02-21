@@ -8,6 +8,8 @@ from file_generator import var_expression
 from file_generator import file_creator
 from pathlib import Path
 
+class GeneratorParserException(Exception):
+    pass
 
 class GeneratorParser:
     """
@@ -16,7 +18,11 @@ class GeneratorParser:
 
     def __init__(self, path: Path):
         # will throw ParseError if path isn't a valid xml file
-        self.xml_tree = Et.parse(path)
+        try:
+            self.xml_tree = Et.parse(path)
+        except:
+            raise Exception("problem parsing xml structure")
+
         # check that the root tag is a file tag
         self.root = self.xml_tree.getroot()
         assert self.root.tag == 'file', 'Root tag in template xml should be a file tag'
@@ -34,7 +40,7 @@ class GeneratorParser:
         self._parse_variables()
 
         # parse all user defined types
-        self.generators = {}
+        self.generators = dict()
         for child in self.root:
             self.generators[child.attrib['name']] = self.get_generator(child)
 
@@ -76,7 +82,7 @@ class GeneratorParser:
     returns - a generator
     '''
     def _handle_type_generator(self, xml_element: Et.Element):
-        generators = []
+        generators = list()
         for child in xml_element:
             gen = self.get_generator(child)
             if gen is not None:
@@ -144,8 +150,10 @@ class GeneratorParser:
     returns - a generator
     '''
     def get_generator(self, xml_element: Et.Element) -> Generator:
+        # find what function should hanle the parsing of the tag
         if xml_element.tag in self.handlers:
             handler = self.handlers[xml_element.tag]
             return handler(xml_element)
 
+        # if no special case, then it is primitive type
         return self._handle_primitive_generator(xml_element)

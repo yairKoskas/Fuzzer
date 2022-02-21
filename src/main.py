@@ -47,7 +47,7 @@ def main():
                         help='path to corpus directory or template format file.')
     main_parser.add_argument('-e', '--extension', type=str, default='txt',
                         help='extension of the input files.')
-    main_parser.add_argument('-a', '--args', type=str, nargs='+', default=['*'],
+    main_parser.add_argument('-a', '--args', type=str, nargs='+', default=['<fuzzed>'],
                         help='arguments to pass to the target program. \"<fuzzed>\" will be replaced by the fuzzed file.')
 
 

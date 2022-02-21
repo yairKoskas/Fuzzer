@@ -11,7 +11,7 @@ class Relation:
         self.target = target
 
 '''
-An interface for generator.
+An abstract class for generator.
 A generator can represents an element in the template format XMl file.
 Can return Field class which holds actual value.
 '''

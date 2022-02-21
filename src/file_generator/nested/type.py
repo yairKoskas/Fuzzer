@@ -1,4 +1,5 @@
 import random
+import functools
 
 from file_generator.field import ParentField
 from file_generator.generator import Generator, Relation
@@ -21,9 +22,7 @@ class Type(ParentField):
         return sum(len(f) for f in self._children)
 
     def value(self):
-        ret = b''
-        for f in self._children:
-            ret += f.value()
+        ret = functools.reduce(lambda a, b: a+b, map(lambda x: x.value(),self._children))
 
         return ret
 

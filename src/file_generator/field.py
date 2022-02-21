@@ -1,16 +1,13 @@
 from file_generator import generator
 
 '''
-A class that represents a field in a file format (might be complex type field).
+An abstract class that represents a field in a file format (might be complex type field).
 Essentially each Field object is equivalent to a certain generator, but has value which you can operate on.
 '''
 class Field:
     def __init__(self, name=None, relation=None) -> None:
         self._relation = relation
-        if relation is None:
-            self._has_relation = False
-        else:
-            self._has_relation = True
+        self._has_relation = relation is not None
         self._name = name
         self._parent = None
 
@@ -61,8 +58,8 @@ class ParentField(Field):
     def __init__(self, name=None, relation=None) -> None:
         super().__init__(name, relation)
 
-        # has relation is checked since children might have relation
-        self._has_relation = False
+        # a paren field should always be called with set_to_relation (to resolve its children relations)
+        self._has_relation = True
 
     '''
     get a relation and return the required value for this relation.

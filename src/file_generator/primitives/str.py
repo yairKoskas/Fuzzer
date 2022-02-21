@@ -44,10 +44,7 @@ class StrGenerator(Generator):
 
     def _valid_value(self):
         # if value is not specified, choose at random
-        if self._size is not None:
-            size = int(self._size)
-        else:
-            size = random.randint(int(self._min_size), int(self._max_size))
+        size = int(self._size) if self._size is not None else random.randint(int(self._min_size), int(self._max_size))
 
         # if value is not specified, choose at random
         if self._value is not None:
