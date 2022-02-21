@@ -21,7 +21,7 @@ class GeneratorParser:
         try:
             self.xml_tree = Et.parse(path)
         except:
-            raise Exception("problem parsing xml structure")
+            raise GeneratorParserException("problem parsing xml structure")
 
         # check that the root tag is a file tag
         self.root = self.xml_tree.getroot()

@@ -1,5 +1,7 @@
 import ast
 
+from file_generator import generator_parser
+
 '''
 A node transformer class that changes every variable in an expression
 so it will be read from a dictionary. "name" will be be tranformes to:
@@ -16,7 +18,7 @@ class VarTransformer(ast.NodeTransformer):
     def visit_Name(self, node):
         # make sure the variable exists
         if node.id not in self._vars:
-            raise Exception(f'variable {node.id} is not defined')
+            raise generator_parser.GeneratorParserException(f'variable {node.id} is not defined')
 
         # self.vars
         self_vars = ast.Attribute(value=ast.Name(id='self', ctx=ast.Load()), attr='_vars', ctx=ast.Load())
