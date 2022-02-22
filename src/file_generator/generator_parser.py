@@ -1,4 +1,5 @@
 import xml.etree.ElementTree as Et
+from pathlib import Path
 
 from file_generator.generator_factory import GeneratorFactory
 from file_generator.generator import Generator, Relation
@@ -6,10 +7,8 @@ from file_generator.nested import type, choice, repeat
 from file_generator import var
 from file_generator import var_expression
 from file_generator import file_creator
-from pathlib import Path
+from exception import FuzzerException
 
-class GeneratorParserException(Exception):
-    pass
 
 class GeneratorParser:
     """
@@ -21,7 +20,7 @@ class GeneratorParser:
         try:
             self.xml_tree = Et.parse(path)
         except:
-            raise GeneratorParserException("problem parsing xml structure")
+            raise FuzzerException("problem parsing xml structure")
 
         # check that the root tag is a file tag
         self.root = self.xml_tree.getroot()

@@ -9,6 +9,7 @@ import mutators.bitflip_mutator as bitflip_mutator
 import mutators.bitinsert_mutator as bitinsert_mutator
 import mutators.combine_mutator as combine_mutator
 from fuzzers import generator_fuzzer
+from exception import FuzzerException
 
 
 '''
@@ -16,8 +17,13 @@ main function for generation fuzzing
 '''
 def main_generate(args):
     template_file = args.input
-    fuzzer = generator_fuzzer.GeneratorFuzzer(args.program, template_file, args.crash_folder, args.timeout, args.extension, args.args)
-    fuzzer.fuzz_multiple(args.times if args.times >= 0 else 'inf')
+
+    try:
+        fuzzer = generator_fuzzer.GeneratorFuzzer(args.program, template_file, args.crash_folder, args.timeout, args.extension, args.args)
+        fuzzer.fuzz_multiple(args.times if args.times >= 0 else 'inf')
+    except FuzzerException as e:
+        print(f'error: {str(e)}')
+        return -1
 
 '''
 main function for blackbox mutaion fuzzing.
@@ -28,8 +34,12 @@ def main_mutate(args):
     mutator = combine_mutator.CombinetMutator(
         [bitinsert_mutator.BitInsertMutator(), bitflip_mutator.BitFlippingMutator()])
 
-    fuzzer = mutation_fuzzer.MutationFuzzer(args.program, mutator, args.crash_folder, args.timeout, args.extension, args.args)
-    fuzzer.fuzz_corpus(corpus, args.times if args.times >= 0 else 'inf')
+    try:
+        fuzzer = mutation_fuzzer.MutationFuzzer(args.program, mutator, args.crash_folder, args.timeout, args.extension, args.args)
+        fuzzer.fuzz_corpus(corpus, args.times if args.times >= 0 else 'inf')
+    except FuzzerException as e:
+        print(f'error: {str(e)}')
+        return -1
 
 def main():
     main_parser = argparse.ArgumentParser(description='Fuzzer')
@@ -61,9 +71,9 @@ def main():
         os.mkdir(args.crash_folder)
 
     if args.type == 'mutation' or args.type == 'mut':
-        main_mutate(args)
+        return main_mutate(args)
     elif args.type == 'generation' or args.type == 'gen':
-        main_generate(args)
+        return main_generate(args)
     else:
         print(f'fuzzing type {args.type} not supported')
         return -1

@@ -3,6 +3,8 @@ import functools
 
 from file_generator.field import ParentField
 from file_generator.generator import Generator, Relation
+from exception import FuzzerException
+
 
 '''
 custom type, combine a group of generators.
@@ -61,7 +63,7 @@ class Type(ParentField):
         if relation.type == "absOffset":
             return self._get_abs_offset_by_name(relation.target)
         
-        raise Exception('relation type not supported')
+        raise FuzzerException('relation type not supported')
 
     def set_to_relation(self):
         for f in self._children:
