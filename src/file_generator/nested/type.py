@@ -24,7 +24,7 @@ class Type(ParentField):
         return sum(len(f) for f in self._children)
 
     def value(self):
-        ret = functools.reduce(lambda a, b: a+b, map(lambda x: x.value(),self._children))
+        ret = functools.reduce(lambda a, b: a+b.value(), self._children, b'')
 
         return ret
 
