@@ -62,6 +62,7 @@ def main():
 
 
     args = main_parser.parse_args()
+    args.args = list(map(lambda s: s.lstrip(), args.args))
 
     if not os.path.isfile(args.program) or not os.access(args.program, os.X_OK):
         print('File doesn\'t exist or isn\'t executable')
