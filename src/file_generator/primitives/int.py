@@ -1,4 +1,5 @@
 import random
+from typing_extensions import Self
 
 from file_generator.field import Field
 from file_generator.generator import Generator
@@ -10,6 +11,7 @@ class Int(Field):
         self.name = name
         self._value = value
         self._endian = endian
+        self._mutations = [self._random_value, self._extreme_value, self._inc_or_dec_value]
 
     def __len__(self):
         return self._size
@@ -24,14 +26,30 @@ class Int(Field):
         if self._has_relation:
             self._value = self._parent.resolve_relation(self._relation)
 
+
     def mutate(self):
-        if random.randint(0,2):
-            # take an extreme value to test edge cases
-            extreme_vals = [0, 2**self._size-1, 2**(self._size-1)-1,-2**(self._size-1)]
-            self._value = random.choice(extreme_vals)
-        else:
-            # take random value
-            self._value = random.randint(0, 2**self._size-1)
+        mut = random.choice(self._mutations)
+        mut()
+            
+
+    # mutations methods
+    # ------------------------------------------------------
+
+    # edge cases
+    def _extreme_value(self):
+        # 0 and signed\unsigned max\min int
+        extreme_vals = [0, 2**(8*self._size)-1, 2**(8*self._size-1)-1,-2**(8*self._size-1)]
+        self._value = random.choice(extreme_vals)
+
+    def _random_value(self):
+        self._value = random.randint(0, 256**self._size-1)
+
+    def _inc_or_dec_value(self):
+        if self._value == 256**self._size-1 or self._value == 0:
+            return
+
+        self._value += random.choice([1,-1])
+    # ------------------------------------------------------
 
 
 class IntGenerator(Generator):

@@ -13,6 +13,7 @@ class Data(Field):
         self._size = int(size)
         self.name = name
         self._value = value
+        self._mutations = [self._bit_flipping, self._swap_byte]
 
     def __len__(self):
         return self._size
@@ -25,12 +26,32 @@ class Data(Field):
             self._value = bytes(self._parent.resolve_relation(self._relation))
 
     def mutate(self):
-        # replace random char
+        mut = random.choice(self._mutations)
+        mut()
+
+    # mutations methods
+    # ------------------------------------------------------
+    def _swap_byte(self):
         if len(self._value) > 0:
             idx = random.randrange(0,len(self._value))
             new_value = list(self._value)
             new_value[idx] = random.randint(0,255)
             self._value = bytes(new_value)
+
+    def _bit_flipping(self):
+        ratio = random.choice([0.01, 0.1, 0.3])
+        bits_to_flip = int((len(self._value) * 8) * ratio) + 1
+
+        mask = [0] * (len(self._value)*8)
+        for _ in range(bits_to_flip):
+            #flip random bit
+            mask[random.randint(0,len(mask)-1)] = 1
+
+        # convert mask to bytes
+        mask = bytes([int("".join(map(str, mask[i:i+8])), 2) for i in range(0, len(mask), 8)])
+
+        return bytes([x^y for x,y in zip(self._value,mask)])
+    # ------------------------------------------------------
 
 
 class DataGenerator(Generator):
