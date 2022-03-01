@@ -2,43 +2,19 @@ from __future__ import print_function
 
 import argparse
 import json
-import os
 import pprint
 import signal
 import sys
 
 import frida
 
-"""
-Frida BB tracer that outputs in DRcov format.
-Frida script is responsible for:
-- Getting and sending the process module map initially
-- Getting the code execution events
-- Parsing the raw event into a GumCompileEvent
-- Converting from GumCompileEvent to DRcov block
-- Sending a list of DRcov blocks to python
-Python side is responsible for:
-- Attaching and detaching from the target process
-- Removing duplicate DRcov blocks
-- Formatting module map and blocks
-- Writing the output file
-"""
-
-# Our frida script, takes two string arguments to embed
-# 1. whitelist of modules, in the form "['module_a', 'module_b']" or "['all']"
-# 2. threads to trace, in the form "[345, 765]" or "['all']"
 with open('code_coverage.js', 'r') as f:
     SCRIPT = f.read()
 
-# These are global so we can easily access them from the frida callbacks or
-# signal handlers. It's important that bbs is a set, as we're going to depend
-# on it's uniquing behavior for deduplication
 modules = []
 bbs = set([])
 
 
-# This converts the object frida sends which has string addresses into
-#  a python dict
 def populate_modules(image_list):
     global modules
 
@@ -61,7 +37,6 @@ def populate_modules(image_list):
     print('[+] Got module info.')
 
 
-# called when we get coverage data from frida
 def populate_bbs(data):
     global bbs
     block_sz = 8
@@ -69,7 +44,6 @@ def populate_bbs(data):
         bbs.add(data[i:i + block_sz])
 
 
-# take the recv'd basic blocks, finish the header, and append the coverage
 def create_coverage(modules, bbs):
     coverage = {'modules': [], 'blocks': []}
     for module in modules:
@@ -79,7 +53,6 @@ def create_coverage(modules, bbs):
     for bb in bbs:
         coverage['blocks'].append(hex(int.from_bytes(bb[0:8], byteorder='little')))
     return coverage
-
 
 
 def on_message(msg, data):
