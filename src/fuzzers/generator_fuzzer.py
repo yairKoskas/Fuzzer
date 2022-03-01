@@ -37,7 +37,7 @@ class GeneratorFuzzer:
     def fuzz_once(self):
         
         with open(self.temp_file, 'wb') as f:
-            f.write(self.file_creator.create_file(random.randrange(0,5)))
+            f.write(self.file_creator.create_file(random.choice([0,1,2,4,8,16,32])))
 
         retcode = self.runner.run(self.program, self.args, self.timeout)
 
