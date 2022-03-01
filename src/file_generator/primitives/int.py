@@ -45,7 +45,7 @@ class Int(Field):
         self._value = random.randint(0, 256**self._size-1)
 
     def _inc_or_dec_value(self):
-        if self._value == 256**self._size-1 or self._value == 0:
+        if self._value == 256**self._size-1 or self._value == -2**(8*self._size-1) or self._value == 0:
             return
 
         self._value += random.choice([1,-1])
