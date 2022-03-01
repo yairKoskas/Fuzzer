@@ -1,0 +1,46 @@
+<file name="GIF">
+    <type name="dataSubBlock">
+        <int name="blockSize" size="1"> 
+            <relation type="size" target="data" />
+        </int>
+        <data name="data" size="255"/>
+	</type>
+
+    <type name="image">
+		<!-- image descriptor -->
+        <int name="sperator" size="1" value="44"/>
+        <int name="leftPos" size="2" max_val="100"/>
+        <int name="topPos" size="2" max_val="100"/>
+        <int name="imgWidth" size="2" value="50"/>
+        <int name="imgHeight" size="2" value="50"/>
+        <int name="packed" size="1" value="64"/>
+
+        <!-- image data -->
+        <int name="LZWminimumCodeSize" size="1" value="3"/>
+        <repeat name="repeater" min_times="1" max_times="10">
+            <custom name="block" type="dataSubBlock" />
+        </repeat>
+
+        <int name="subBlocksTrailer" size="1" value="0"/>
+	</type>
+
+	<type name="file">
+		<!-- header -->
+		<str name="magic" value="GIF"/>
+        <str name="version" value="87a"/>
+
+        <!-- Logical Screen Descriptor -->
+        <int name="screenWidth" size="2" value="150"/>
+        <int name="screenHeight" size="2" value="150"/>
+
+        <int name="packed" size="1" value="247"/>
+        <int name="bgColorIndex" size="1"/>
+        <int name="pxlAspectRatio" size="1" value="0"/>
+
+        <data name="colorTable" size="768"/>
+        <custom name="block" type="image" />
+
+        <int name="trailer" size="1" value="59"/>
+        
+	</type>
+</file>

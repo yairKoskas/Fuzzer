@@ -1,0 +1,2 @@
+class FuzzerException(Exception):
+    pass
