@@ -14,6 +14,8 @@ class Repeat(ParentField):
         self.name = name
         self._children = fields
 
+        self._mutations = [self._mutate_child, self._mutate_child, self._delete_child]
+
         # set the parents of all children to self
         for f in self._children:
             f.set_parent(self)
@@ -26,18 +28,32 @@ class Repeat(ParentField):
 
         return ret
 
-    def mutate(self):
-        # mutate random field
-        if len(self._children) > 0:
-            idx = random.randint(0,len(self._children)-1)
-            self._children[idx].mutate()
-
     def resolve_relation(self, relation):
         return self._parent.resolve_relation(relation)
 
     def set_to_relation(self):
         for f in self._children:
             f.set_to_relation()
+
+    def mutate(self):
+        mut = random.choice(self._mutations)
+        mut()
+
+    # mutations methods
+    # ------------------------------------------------------
+
+    # delete random child
+    def _delete_child(self):
+        if len(self._children) > 0:
+            idx = random.randint(0, len(self._children)-1)
+            self._children.pop(idx)
+
+    # mutate random child
+    def _mutate_child(self):
+        if len(self._children) > 0:
+            idx = random.randint(0,len(self._children)-1)
+            self._children[idx].mutate()
+    # ------------------------------------------------------
 
 
 class RepeatGenerator(Generator):
