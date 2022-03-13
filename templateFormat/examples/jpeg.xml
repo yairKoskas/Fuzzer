@@ -1,0 +1,121 @@
+<file name="jpeg">
+    <var name="imgWidth" min_val="1" max_val="10"/>
+    <var name="imgHeight" min_val="1" max_val="10"/>
+
+	<type name="comment">
+		<data name="COM" value="fffe"/>
+
+		<block name="commentInside">
+			<int name="length" size="2" endian="big"> <relation type="size" target="father"/></int>
+			<data name="content"/>
+		</block>
+	</type>
+
+	<type name="scan">
+		<data name="SOS" value="ffda"/>
+
+		<block name="scanInside">
+			<int name="length" size="2" endian="big"> <relation type="size" target="father"/></int>
+			<int name="components" size="1" endian="big" value="1"/>
+
+			<int name="componentID" size="1" endian="big" value="0"/>
+			<int name="tdta" size="1" endian="big" value="0"/>
+
+			<int name="ss" size="1" endian="big" value="0"/>
+			<int name="se" size="1" endian="big" value="63"/>
+			<int name="ahal" size="1" endian="big" value="0"/>
+		</block>
+	</type>
+
+	<type name="hoffmanDCTableAC">
+		<data name="DHT" value="ffc4"/>
+
+		<block name="hoffmanTableInside">
+			<int name="length" size="2" endian="big"> <relation type="size" target="father"/></int>
+
+			<int name="tcth" size="1" endian="big" value="0"/>
+			
+			<repeat name="L" times="16">
+				<int name="Li" size="1" value="1"/>
+			</repeat>
+			<data name="content" size="16"/>
+		</block>
+	</type>
+
+	<type name="hoffmanDCTableDC">
+		<data name="DHT" value="ffc4"/>
+
+		<block name="hoffmanTableInside">
+			<int name="length" size="2" endian="big"> <relation type="size" target="father"/></int>
+
+			<int name="tcth" size="1" endian="big" value="16"/>
+			
+			<repeat name="L" times="16">
+				<int name="Li" size="1" value="1"/>
+			</repeat>
+			<data name="content" size="16"/>
+		</block>
+	</type>
+
+	<type name="frameHeader">
+		<data name="app0marker" value="ffc0"/>
+
+		<block name="frameHeaderInside">
+			<int name="length" size="2" endian="big"> <relation type="size" target="father"/></int>
+			<int name="precision" size="1" endian="big" value="8"/>
+			<int name="lines" size="2" endian="big" value="var:imgHeight"/>
+			<int name="columns" size="2" endian="big" value="var:imgWidth"/>
+			<int name="components" size="1" endian="big" value="1"/>
+
+			<int name="componentID" size="1" endian="big" value="0"/>
+			<int name="sampeling" size="1" endian="big" value="17"/>
+			<int name="qt" size="1" endian="big" value="0"/>
+		</block>
+
+	</type>
+
+	<type name="app0">
+		<data name="app0marker" value="ffe0"/>
+
+		<block name="app0Inside">
+			<int name="length" size="2" endian="big"> <relation type="size" target="father"/></int>
+			<data name="typeOfJFIF" value="4a46494600"/>
+			<data name="version" value="0101"/>
+			<int name="units" size="1" value="0"/>
+			<int name="Xdensity" size="2" endian="big"/>
+			<int name="Ydensity" size="2" endian="big"/>
+			<!-- TODO: support thumbnail -->
+			<int name="Xthumbnail" size="1" value="0"/>
+			<int name="Ythumbnail" size="1" value="0"/>
+		</block>
+
+	</type>
+
+	<type name="quantizationTable">
+		<data name="quantizationTablemarker" value="ffdb"/>
+
+		<block name="quantizationTableInside">
+			<int name="length" size="2" endian="big"> <relation type="size" target="father"/></int>
+			<int name="PqTq" size="1" endian="big" value="0"/>
+			<repeat name="quantization" times="64">
+				<int name="quantizationElement" size="1" max_val="127"/>
+			</repeat>
+		</block>
+	</type>
+
+	<type name="file">
+		<data name="start" value="ffd8"/>
+		<custom name="app0" type="app0" />
+		<custom name="app0" type="quantizationTable" />
+		<custom name="app0" type="frameHeader" />
+		<custom name="app0" type="hoffmanDCTableAC" />
+		<custom name="app0" type="hoffmanDCTableDC" />
+		<custom name="app0" type="scan" />
+		
+		<data name="scanContent" size="1"/>
+		
+		
+        <data name="end" value="ffd9"/>
+
+	</type>
+</file>
