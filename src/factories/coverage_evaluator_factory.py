@@ -1,10 +1,10 @@
 from evaluators.block_evaluator import BlockEvaluator
 from evaluators.edge_evaluator import EdgeEvaluator
 class CoverageEvaluatorFactory:
-    def create_evaluator(type: str, program: str):
+    def create_evaluator(type: str):
         if type == "block":
-            return BlockEvaluator(program)
+            return BlockEvaluator()
         elif type == "edge":
-            return EdgeEvaluator(program)
+            return EdgeEvaluator()
         else:
             raise ValueError('No such coverage type')
