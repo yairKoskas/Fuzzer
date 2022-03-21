@@ -3,6 +3,7 @@ from pdb import runeval
 import sys
 import signal
 import subprocess
+from factories.coverage_evaluator_factory import CoverageEvaluatorFactory
 
 class Runner:
 
@@ -15,7 +16,7 @@ class Runner:
 
     returns: the return code of the program.
     '''
-    def run(self, path, args, timeout):
+    def run(self, path, args, timeout, saved_states=None):
         if not os.path.isfile(path) or not os.access(path, os.X_OK):
             raise Exception('File doesn\'t exist or isn\'t executable')
 
@@ -31,3 +32,25 @@ class Runner:
 
         proc.wait()
         return proc.returncode
+
+
+class CoverageRunner:
+    def __init__(self, coverage_type):
+        self.coverage_evaluator = CoverageEvaluatorFactory.create_evaluator(coverage_type)
+    '''
+    run a program with given arguments and check is it crashed.
+
+    parametrs:
+    path - path to the program to run.
+    args - list of arguments to the program.
+
+    returns: the return code of the program.
+    '''
+    def run(self, path, args, timeout, saved_states):
+        if not os.path.isfile(path) or not os.access(path, os.X_OK):
+            raise Exception('File doesn\'t exist or isn\'t executable')
+        states, proc_code = self.coverage_evaluator.get_coverage(path, args, timeout)
+        if len(states - saved_states) > 0:
+            # signal to the fuzzer that the program reached a new state
+            proc_code = 2
+        return proc_code
