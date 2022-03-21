@@ -110,6 +110,14 @@
         <xs:attribute name="max_times" type="intOrVar"/>
     </xs:complexType>
 
+    <xs:complexType name="function">
+        <xs:group ref="types" minOccurs="1" maxOccurs="1"/>
+
+        <xs:attribute name="name" type="xs:string" use="required"/>
+        <xs:attribute name="module_name" type="xs:string" use="required"/>
+        <xs:attribute name="function_name" type="xs:string" use="required"/>
+    </xs:complexType>
+
     <xs:group name="types">
 	<xs:choice>
             <xs:element name="int" type="int" minOccurs="0" maxOccurs="1"/>
@@ -120,6 +128,7 @@
             <xs:element name="choice" type="choice" minOccurs="0" maxOccurs="1"/>
             <xs:element name="block" type="block" minOccurs="0" maxOccurs="1"/>
             <xs:element name="padding" type="padding" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="function" type="function" minOccurs="0" maxOccurs="1"/>
 	</xs:choice>
     </xs:group>
 </xs:schema>

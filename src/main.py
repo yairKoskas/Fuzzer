@@ -1,8 +1,10 @@
-import string
 import sys
 import os
 import json
 import argparse
+
+# add current working directory to path, used for function feature
+sys.path.append(os.getcwd())
 
 from fuzzers import mutation_fuzzer
 import mutators.bitflip_mutator as bitflip_mutator

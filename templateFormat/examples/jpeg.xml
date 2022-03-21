@@ -1,6 +1,6 @@
 <file name="jpeg">
-    <var name="imgWidth" min_val="1" max_val="10"/>
-    <var name="imgHeight" min_val="1" max_val="10"/>
+    <var name="imgWidth" min_val="1" max_val="100"/>
+    <var name="imgHeight" min_val="1" max_val="100"/>
 
 	<type name="comment">
 		<data name="COM" value="fffe"/>
@@ -27,7 +27,7 @@
 		</block>
 	</type>
 
-	<type name="hoffmanDCTableAC">
+	<type name="hoffmanDCTableDC">
 		<data name="DHT" value="ffc4"/>
 
 		<block name="hoffmanTableInside">
@@ -35,14 +35,12 @@
 
 			<int name="tcth" size="1" endian="big" value="0"/>
 			
-			<repeat name="L" times="16">
-				<int name="Li" size="1" value="1"/>
-			</repeat>
-			<data name="content" size="16"/>
+			<data name="lengths" value="00010501010101010100000000000000"/>
+			<data name="values" value="000102030405060708090a0b"/>
 		</block>
 	</type>
 
-	<type name="hoffmanDCTableDC">
+	<type name="hoffmanDCTableAC">
 		<data name="DHT" value="ffc4"/>
 
 		<block name="hoffmanTableInside">
@@ -50,10 +48,34 @@
 
 			<int name="tcth" size="1" endian="big" value="16"/>
 			
-			<repeat name="L" times="16">
-				<int name="Li" size="1" value="1"/>
-			</repeat>
-			<data name="content" size="16"/>
+			<data name="lengths" value="0002010303020403050504040000017d"/>
+			<data name="values" value="01020300041105122131410613516107227114328191a1082342b1c11552d1f02433627282090a161718191a25262728292a3435363738393a434445464748494a535455565758595a636465666768696a737475767778797a838485868788898a92939495969798999aa2a3a4a5a6a7a8a9aab2b3b4b5b6b7b8b9bac2c3c4c5c6c7c8c9cad2d3d4d5d6d7d8d9dae1e2e3e4e5e6e7e8e9eaf1f2f3f4f5f6f7f8f9fa"/>
+		</block>
+	</type>
+
+	<type name="hoffmanDCTableDC2">
+		<data name="DHT" value="ffc4"/>
+
+		<block name="hoffmanTableInside">
+			<int name="length" size="2" endian="big"> <relation type="size" target="father"/></int>
+
+			<int name="tcth" size="1" endian="big" value="1"/>
+			
+			<data name="lengths" value="00030101010101010101010000000000"/>
+			<data name="values" value="000102030405060708090a0b"/>
+		</block>
+	</type>
+
+	<type name="hoffmanDCTableAC2">
+		<data name="DHT" value="ffc4"/>
+
+		<block name="hoffmanTableInside">
+			<int name="length" size="2" endian="big"> <relation type="size" target="father"/></int>
+
+			<int name="tcth" size="1" endian="big" value="17"/>
+			
+			<data name="lengths" value="00020102040403040705040400010277"/>
+			<data name="values" value="000102031104052131061241510761711322328108144291a1b1c109233352f0156272d10a162434e125f11718191a262728292a35363738393a434445464748494a535455565758595a636465666768696a737475767778797a82838485868788898a92939495969798999aa2a3a4a5a6a7a8a9aab2b3b4b5b6b7b8b9bac2c3c4c5c6c7c8c9cad2d3d4d5d6d7d8d9dae2e3e4e5e6e7e8e9eaf2f3f4f5f6f7f8f9fa"/>
 		</block>
 	</type>
 
@@ -106,15 +128,16 @@
 	<type name="file">
 		<data name="start" value="ffd8"/>
 		<custom name="app0" type="app0" />
-		<custom name="app0" type="quantizationTable" />
-		<custom name="app0" type="frameHeader" />
-		<custom name="app0" type="hoffmanDCTableAC" />
-		<custom name="app0" type="hoffmanDCTableDC" />
+		<custom name="qt" type="quantizationTable" />
+		<custom name="fh" type="frameHeader" />
+		<custom name="htdc" type="hoffmanDCTableDC" />
+		<custom name="htac" type="hoffmanDCTableAC" />
 		<custom name="app0" type="scan" />
 		
-		<data name="scanContent" size="1"/>
-		
-		
+		<function name="data" module_name='templateFormat.examples.jpeg_huffman_encoder' function_name='encode'>
+			<data name="imageData" size="var:(imgWidth//8+1)*(imgHeight//8+1)*64"/>
+		</function>
+			
         <data name="end" value="ffd9"/>
 
 	</type>
