@@ -3,6 +3,9 @@ from file_generator import generator_parser
 import sys
 import os
 
+# add current working directory to path, used for function feature
+sys.path.append(os.getcwd())
+
 
 # simple main file to generate valid file to test template file
 def main():

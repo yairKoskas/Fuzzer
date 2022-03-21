@@ -3,7 +3,7 @@ from pathlib import Path
 
 from file_generator.generator_factory import GeneratorFactory
 from file_generator.generator import Generator, Relation
-from file_generator.nested import type, choice, repeat
+from file_generator.nested import type, choice, repeat, function
 from file_generator import var
 from file_generator import var_expression
 from file_generator import file_creator
@@ -33,7 +33,8 @@ class GeneratorParser:
             'block' : self._handle_type_generator,
             'choice' : self._handle_choice_generator,
             'repeat' : self._handle_repeat_generator,
-            'custom' : self._handle_custom_generator
+            'custom' : self._handle_custom_generator,
+            'function' : self._handle_function_generator
         }
 
         self._parse_variables()
@@ -127,6 +128,20 @@ class GeneratorParser:
         t = xml_element.attrib['type']
         if t in self.generators:
             return self.generators[t].copy_with_name(xml_element.attrib['name'])
+
+    '''
+    create function geneartor
+    returns - a generator
+    '''
+    def _handle_function_generator(self, xml_element: Et.Element):
+        generators = []
+        for child in xml_element:
+            gen = self.get_generator(child)
+            if gen is not None:
+                generators.append(gen)
+        args = self._parse_attributes(xml_element.attrib)
+        args['generator'] = generators[0]
+        return function.FunctionGenerator(**args)
 
     '''
     create primitive geneartor
