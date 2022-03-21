@@ -44,7 +44,7 @@ class MutationFuzzer:
         with open(self.temp_file, 'wb') as f:
             f.write(self.mutator.mutate(content))
 
-        retcode = self.runner.run(self.program, self.args, self.timeout)
+        retcode = self.runner.run(self.program, self.args, self.timeout, self.saved_states)
 
         # copy content to the crashed folder if neccesary
         if retcode not in self.non_crashing_codes:
