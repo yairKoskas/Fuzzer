@@ -9,13 +9,17 @@ class MutationFuzzer:
     crash_folder - folder to save the files that casued crash
     """
 
-    def __init__(self, program: str, mutator, crash_folder: str, timeout: int, extension: str, args: list):
+    def __init__(self, program: str, mutator, crash_folder: str, timeout: int, extension: str, args: list, coverage_type: str=None):
         self.timeout = timeout
         self.mutator = mutator
         self.program = program
         self.crashes = 0
         self.crash_folder = crash_folder
-        self.runner = runner.Runner()
+        self.saved_states = set()
+        if coverage_type:
+            self.runner = runner.CoverageRunner(coverage_type)
+        else:
+            self.runner = runner.Runner()
 
         # temporary file to save fuzzed files at
         self.temp_file = f'./temp.{extension}'
@@ -37,7 +41,7 @@ class MutationFuzzer:
         with open(self.temp_file, 'wb') as f:
             f.write(self.mutator.mutate(content))
 
-        retcode = self.runner.run(self.program, self.args, self.timeout)
+        retcode = self.runner.run(self.program, self.args, self.timeout, self.saved_states)
 
         # copy content to the crashed folder if neccesary
         if retcode != 0 and retcode != 1:
