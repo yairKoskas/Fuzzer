@@ -17,7 +17,7 @@ class MutationFuzzer:
         self.crash_folder = crash_folder
         self.saved_states = set()
         if coverage_type:
-            self.runner = runner.CoverageRunner(coverage_type)
+            self.runner = runner.CoverageRunner(coverage_type, program)
         else:
             self.runner = runner.Runner()
 

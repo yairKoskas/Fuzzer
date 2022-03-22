@@ -1,4 +1,4 @@
-from coverage_evaluator import CoverageEvaluator
+from evaluators.coverage_evaluator import CoverageEvaluator
 from typing import Set
 
 
