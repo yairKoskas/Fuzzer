@@ -35,8 +35,8 @@ class Runner:
 
 
 class CoverageRunner:
-    def __init__(self, coverage_type):
-        self.coverage_evaluator = CoverageEvaluatorFactory.create_evaluator(coverage_type)
+    def __init__(self, coverage_type, program):
+        self.coverage_evaluator = CoverageEvaluatorFactory.create_evaluator(coverage_type, program)
     '''
     run a program with given arguments and check is it crashed.
 
