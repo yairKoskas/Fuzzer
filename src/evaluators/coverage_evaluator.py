@@ -14,11 +14,11 @@ class CoverageEvaluator:
         self.program = program
 
     """
-    @brief returns the set of states the input has reached in the program
+    @brief runs the program and returns the set of states the input has reached in the program
     @param inp input to the program
     @return Set of states
     """
-    def get_coverage(self, inp) -> Set:
+    def get_coverage(self, path, args, timeout) -> Set:
         pass
     
     """
