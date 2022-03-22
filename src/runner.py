@@ -51,6 +51,8 @@ class CoverageRunner:
             raise Exception('File doesn\'t exist or isn\'t executable')
         states, proc_code = self.coverage_evaluator.get_coverage(path, args, timeout)
         if len(states - saved_states) > 0:
+            # save the new states in the set
+            saved_states |= states
             # signal to the fuzzer that the program reached a new state
             proc_code = 2
         return proc_code
