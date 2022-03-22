@@ -35,7 +35,7 @@ def main_mutate(args):
         [bitinsert_mutator.BitInsertMutator(), bitflip_mutator.BitFlippingMutator()])
 
     try:
-        fuzzer = mutation_fuzzer.MutationFuzzer(args.program, mutator, args.crash_folder, args.timeout, args.extension, args.args)
+        fuzzer = mutation_fuzzer.MutationFuzzer(args.program, mutator, args.crash_folder, args.timeout, args.extension, args.args, args.coverage)
         fuzzer.fuzz_corpus(corpus, args.times if args.times >= 0 else 'inf')
     except FuzzerException as e:
         print(f'error: {str(e)}')
@@ -59,6 +59,8 @@ def main():
                         help='extension of the input files.')
     main_parser.add_argument('-a', '--args', type=str, nargs='+', default=['<fuzzed>'],
                         help='arguments to pass to the target program. \"<fuzzed>\" will be replaced by the fuzzed file.')
+    main_parser.add_argument('-cov', '--coverage', type=str, required=False,
+                        help='code coverage type.')
 
 
     args = main_parser.parse_args()
