@@ -65,6 +65,27 @@ rpc.exports = {
 
     // initialize the address of the target function (to-be-hooked)
     // and attach the Interceptor
+    attachStalker: function() {
+        stalker_attached = true
+        stalker_finished = false
+        Stalker.queueCapacity = 100000000
+        Stalker.queueDrainInterval = 1000*1000
+
+        debugCov("follow")
+        Stalker.follow(Process.getCurrentThreadId(), {
+            events: {
+                call: false,
+                ret: false,
+                exec: false,
+                block: true,
+                compile: false
+            },
+            onReceive: function (events) {
+                debugCov("onReceive: len(stalker_events)=" + stalker_events.length)
+                stalker_events.push(events)
+            }
+        });
+    },
     settarget: function(target) {
         debug("Target: " + target)
         target_function = ptr(target)
