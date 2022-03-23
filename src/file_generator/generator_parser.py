@@ -1,5 +1,6 @@
 import xml.etree.ElementTree as Et
 from pathlib import Path
+import copy
 
 from file_generator.generator_factory import GeneratorFactory
 from file_generator.generator import Generator, Relation
@@ -40,15 +41,18 @@ class GeneratorParser:
         self._parse_variables()
 
         # parse all user defined types
-        self.generators = dict()
+        self.types = dict()
         for child in self.root:
-            self.generators[child.attrib['name']] = self.get_generator(child)
+            if child.tag == 'type':
+                self.types[child.attrib['name']] = child
+
+        self.file_generator = self.get_generator(self.types['file'])
 
     '''
     returns a FileCreator for the file format
     '''
     def get_creator(self) -> file_creator.FileCreator:
-        return file_creator.FileCreator(self.generators['file'], self._vars.values())
+        return file_creator.FileCreator(self.file_generator, self._vars.values())
 
     '''
     read all variables from the file
@@ -121,13 +125,43 @@ class GeneratorParser:
         return repeat.RepeatGenerator(**args)
 
     '''
+    parse parameters for type element
+    i.e replace every appearence  of the param
+    '''
+    def _replace_parameters(self, xml_element: Et.Element, params_names: list, params_values: list):
+        num_of_params = len(params_names)
+        element = copy.deepcopy(xml_element)
+        element.attrib.pop('params')
+
+        for child in element.iter():
+            for attr in child.attrib:
+                if attr != 'name':
+                    for i in range(num_of_params):
+                        child.attrib[attr] = child.attrib[attr].replace(params_names[i], params_values[i])
+
+
+        return element
+        
+    '''
     create custom geneartor
     returns - a generator
     '''
     def _handle_custom_generator(self, xml_element: Et.Element):
+        # first we want to replace parameters
         t = xml_element.attrib['type']
-        if t in self.generators:
-            return self.generators[t].copy_with_name(xml_element.attrib['name'])
+        type_element = self.types[t]
+        if 'params' in type_element.attrib:
+            params_names = type_element.attrib['params'].split(',')
+            params_names = list(map(lambda x: x.lstrip(), params_names))
+            params_values = xml_element.attrib['params'].split(',')
+            params_values = list(map(lambda x: x.lstrip(), params_values))
+
+            if (len(params_names) != len(params_values)):
+                raise FuzzerException(f'expected {len(params_names)} parameters for type {t} but got {len(params_values)}')
+
+            type_element = self._replace_parameters(type_element, params_names, params_values)
+
+        return self._handle_type_generator(type_element)
 
     '''
     create function geneartor
