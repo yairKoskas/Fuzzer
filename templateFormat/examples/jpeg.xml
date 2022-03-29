@@ -27,55 +27,38 @@
 		</block>
 	</type>
 
-	<type name="hoffmanDCTableDC">
-		<data name="DHT" value="ffc4"/>
+	<type name="scan_3_components">
+		<data name="SOS" value="ffda"/>
 
-		<block name="hoffmanTableInside">
+		<block name="scanInside">
 			<int name="length" size="2" endian="big"> <relation type="size" target="father"/></int>
+			<int name="components" size="1" endian="big" value="3"/>
 
-			<int name="tcth" size="1" endian="big" value="0"/>
-			
-			<data name="lengths" value="00010501010101010100000000000000"/>
-			<data name="values" value="000102030405060708090a0b"/>
+			<int name="componentID" size="1" endian="big" value="0"/>
+			<int name="tdta" size="1" endian="big" value="0"/>
+
+			<int name="componentID" size="1" endian="big" value="1"/>
+			<int name="tdta" size="1" endian="big" value="0"/>
+
+			<int name="componentID" size="1" endian="big" value="2"/>
+			<int name="tdta" size="1" endian="big" value="0"/>
+
+			<int name="ss" size="1" endian="big" value="0"/>
+			<int name="se" size="1" endian="big" value="63"/>
+			<int name="ahal" size="1" endian="big" value="0"/>
 		</block>
 	</type>
 
-	<type name="hoffmanDCTableAC">
+	<type name="hoffmanTable" params="tableNum, lengths, values">
 		<data name="DHT" value="ffc4"/>
 
 		<block name="hoffmanTableInside">
 			<int name="length" size="2" endian="big"> <relation type="size" target="father"/></int>
 
-			<int name="tcth" size="1" endian="big" value="16"/>
+			<int name="tcth" size="1" endian="big" value="tableNum"/>
 			
-			<data name="lengths" value="0002010303020403050504040000017d"/>
-			<data name="values" value="01020300041105122131410613516107227114328191a1082342b1c11552d1f02433627282090a161718191a25262728292a3435363738393a434445464748494a535455565758595a636465666768696a737475767778797a838485868788898a92939495969798999aa2a3a4a5a6a7a8a9aab2b3b4b5b6b7b8b9bac2c3c4c5c6c7c8c9cad2d3d4d5d6d7d8d9dae1e2e3e4e5e6e7e8e9eaf1f2f3f4f5f6f7f8f9fa"/>
-		</block>
-	</type>
-
-	<type name="hoffmanDCTableDC2">
-		<data name="DHT" value="ffc4"/>
-
-		<block name="hoffmanTableInside">
-			<int name="length" size="2" endian="big"> <relation type="size" target="father"/></int>
-
-			<int name="tcth" size="1" endian="big" value="1"/>
-			
-			<data name="lengths" value="00030101010101010101010000000000"/>
-			<data name="values" value="000102030405060708090a0b"/>
-		</block>
-	</type>
-
-	<type name="hoffmanDCTableAC2">
-		<data name="DHT" value="ffc4"/>
-
-		<block name="hoffmanTableInside">
-			<int name="length" size="2" endian="big"> <relation type="size" target="father"/></int>
-
-			<int name="tcth" size="1" endian="big" value="17"/>
-			
-			<data name="lengths" value="00020102040403040705040400010277"/>
-			<data name="values" value="000102031104052131061241510761711322328108144291a1b1c109233352f0156272d10a162434e125f11718191a262728292a35363738393a434445464748494a535455565758595a636465666768696a737475767778797a82838485868788898a92939495969798999aa2a3a4a5a6a7a8a9aab2b3b4b5b6b7b8b9bac2c3c4c5c6c7c8c9cad2d3d4d5d6d7d8d9dae2e3e4e5e6e7e8e9eaf2f3f4f5f6f7f8f9fa"/>
+			<data name="lengths" value="lengths"/>
+			<data name="values" value="values"/>
 		</block>
 	</type>
 
@@ -125,20 +108,69 @@
 		</block>
 	</type>
 
-	<type name="file">
+	<type name="frameHeader_3_components">
+		<data name="marker" value="ffc0"/>
+
+		<block name="frameHeaderInside">
+			<int name="length" size="2" endian="big"> <relation type="size" target="father"/></int>
+			<int name="precision" size="1" endian="big" value="8"/>
+			<int name="lines" size="2" endian="big" value="var:imgHeight"/>
+			<int name="columns" size="2" endian="big" value="var:imgWidth"/>
+			<int name="components" size="1" endian="big" value="3"/>
+
+			<int name="componentID" size="1" endian="big" value="0"/>
+			<int name="sampeling" size="1" endian="big" value="17"/>
+			<int name="qt" size="1" endian="big" value="0"/>
+
+			<int name="componentID" size="1" endian="big" value="1"/>
+			<int name="sampeling" size="1" endian="big" value="17"/>
+			<int name="qt" size="1" endian="big" value="0"/>
+
+			<int name="componentID" size="1" endian="big" value="2"/>
+			<int name="sampeling" size="1" endian="big" value="17"/>
+			<int name="qt" size="1" endian="big" value="0"/>
+		</block>
+
+	</type>
+
+	<type name="1-components">
 		<data name="start" value="ffd8"/>
 		<custom name="app0" type="app0" />
 		<custom name="qt" type="quantizationTable" />
 		<custom name="fh" type="frameHeader" />
-		<custom name="htdc" type="hoffmanDCTableDC" />
-		<custom name="htac" type="hoffmanDCTableAC" />
+		<custom name="hoffmanTableDC" type="hoffmanTable" params="0,00010501010101010100000000000000,000102030405060708090a0b"/>
+		<custom name="hoffmanTableAC" type="hoffmanTable" params="16,0002010303020403050504040000017d,01020300041105122131410613516107227114328191a1082342b1c11552d1f02433627282090a161718191a25262728292a3435363738393a434445464748494a535455565758595a636465666768696a737475767778797a838485868788898a92939495969798999aa2a3a4a5a6a7a8a9aab2b3b4b5b6b7b8b9bac2c3c4c5c6c7c8c9cad2d3d4d5d6d7d8d9dae1e2e3e4e5e6e7e8e9eaf1f2f3f4f5f6f7f8f9fa"/>
 		<custom name="app0" type="scan" />
 		
-		<function name="data" module_name='templateFormat.examples.jpeg_huffman_encoder' function_name='encode'>
-			<data name="imageData" size="var:(imgWidth//8+1)*(imgHeight//8+1)*64"/>
+		<function name="data" module_name='templateFormat.examples.jpeg_huffman_encoder' function_name='encode_grey'>
+			<data name="imageData" size="var:(-(-imgWidth // 8))*(-(-imgHeight // 8))*64"/>
 		</function>
 			
         <data name="end" value="ffd9"/>
+	</type>
 
+	<type name="3-components">
+		<data name="start" value="ffd8"/>
+		<custom name="app0" type="app0" />
+		<custom name="qt" type="quantizationTable" />
+		<custom name="fh" type="frameHeader_3_components" />
+		<custom name="hoffmanTableDC" type="hoffmanTable" params="0,00010501010101010100000000000000,000102030405060708090a0b"/>
+		<custom name="hoffmanTableAC" type="hoffmanTable" params="16,0002010303020403050504040000017d,01020300041105122131410613516107227114328191a1082342b1c11552d1f02433627282090a161718191a25262728292a3435363738393a434445464748494a535455565758595a636465666768696a737475767778797a838485868788898a92939495969798999aa2a3a4a5a6a7a8a9aab2b3b4b5b6b7b8b9bac2c3c4c5c6c7c8c9cad2d3d4d5d6d7d8d9dae1e2e3e4e5e6e7e8e9eaf1f2f3f4f5f6f7f8f9fa"/>
+		<custom name="hoffmanTableDC2" type="hoffmanTable" params="1,00030101010101010101010000000000,000102030405060708090a0b"/>
+		<custom name="hoffmanTableAC2" type="hoffmanTable" params="17,00020102040403040705040400010277,000102031104052131061241510761711322328108144291a1b1c109233352f0156272d10a162434e125f11718191a262728292a35363738393a434445464748494a535455565758595a636465666768696a737475767778797a82838485868788898a92939495969798999aa2a3a4a5a6a7a8a9aab2b3b4b5b6b7b8b9bac2c3c4c5c6c7c8c9cad2d3d4d5d6d7d8d9dae2e3e4e5e6e7e8e9eaf2f3f4f5f6f7f8f9fa"/>
+		<custom name="scan" type="scan_3_components" />
+		
+		<function name="data" module_name='templateFormat.examples.jpeg_huffman_encoder' function_name='encode_color'>
+			<data name="imageData" size="var:(-(-imgWidth // 8))*(-(-imgHeight // 8))*64*3"/>
+		</function>
+			
+        <data name="end" value="ffd9"/>
+	</type>
+
+	<type name="file">
+		<choice name="numOfComponents">
+			<custom name="1-comp" type="1-components" />
+			<custom name="3-comp" type="3-components" />
+		</choice>
 	</type>
 </file>
