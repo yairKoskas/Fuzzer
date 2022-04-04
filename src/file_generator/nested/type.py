@@ -15,6 +15,7 @@ class Type(ParentField):
         self.name = name
         self._children = fields
         self._child_names = [f.name for f in self._children]
+        self._mutations = [self._mutate_child, self._mutate_child, self._delete_child]
 
         # set the parents of all children to self
         for f in self._children:
@@ -27,12 +28,6 @@ class Type(ParentField):
         ret = functools.reduce(lambda a, b: a+b.value(), self._children, b'')
 
         return ret
-
-    def mutate(self):
-        # mutate random field
-        if len(self._children) > 0:
-            idx = random.randint(0,len(self._children)-1)
-            self._children[idx].mutate()
 
     # return the size of an element by name
     def _get_size_by_name(self, name):
@@ -68,6 +63,26 @@ class Type(ParentField):
     def set_to_relation(self):
         for f in self._children:
             f.set_to_relation()
+
+    def mutate(self):
+        mut = random.choice(self._mutations)
+        mut()
+
+    # mutations methods
+    # ------------------------------------------------------
+
+    # delete random child
+    def _delete_child(self):
+        if len(self._children) > 0:
+            idx = random.randint(0, len(self._children)-1)
+            self._children.pop(idx)
+
+    # mutate random child
+    def _mutate_child(self):
+        if len(self._children) > 0:
+            idx = random.randint(0,len(self._children)-1)
+            self._children[idx].mutate()
+    # ------------------------------------------------------
 
 
 class TypeGenerator(Generator):
