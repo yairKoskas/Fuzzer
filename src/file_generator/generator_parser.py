@@ -8,6 +8,7 @@ from file_generator.nested import type, choice, repeat, function
 from file_generator import var
 from file_generator import var_expression
 from file_generator import file_creator
+from file_generator.primitives import set_var
 from exception import FuzzerException
 
 
@@ -35,7 +36,8 @@ class GeneratorParser:
             'choice' : self._handle_choice_generator,
             'repeat' : self._handle_repeat_generator,
             'custom' : self._handle_custom_generator,
-            'function' : self._handle_function_generator
+            'function' : self._handle_function_generator,
+            'set' : self._handle_set_var_generator
         }
 
         self._parse_variables()
@@ -142,6 +144,15 @@ class GeneratorParser:
 
         return element
         
+    '''
+    create set_var geneartor
+    returns - a generator
+    '''
+    def _handle_set_var_generator(self, xml_element: Et.Element):
+        args = self._parse_attributes(xml_element.attrib)
+        args['vars'] = self._vars
+        return set_var.SetVarGenerator(**args)
+
     '''
     create custom geneartor
     returns - a generator

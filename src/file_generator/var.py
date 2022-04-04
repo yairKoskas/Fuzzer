@@ -21,6 +21,9 @@ class Var:
     def choose_value(self):
         self._current_value = random.randint(self._min_val,self._max_val)
 
+    def set_value(self, val):
+        self._current_value = val
+
     '''
     Get the current value of the variable as an int.
     '''

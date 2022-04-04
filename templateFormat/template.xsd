@@ -56,6 +56,12 @@
             <xs:attribute name="max_val" type="intOrVar"/>
     </xs:complexType>
 
+    <xs:complexType name="set">
+            <xs:attribute name="name" type="xs:string" use="required"/>
+            <xs:attribute name="var_name" type="xs:string" use="required"/>
+            <xs:attribute name="value" type="intOrVar" use="required"/>
+    </xs:complexType>
+
     <xs:complexType name="str">
             <xs:choice minOccurs="0" maxOccurs="1">
 			    <xs:element name="relation" type="relation"/>
@@ -131,6 +137,7 @@
             <xs:element name="block" type="block" minOccurs="0" maxOccurs="1"/>
             <xs:element name="padding" type="padding" minOccurs="0" maxOccurs="1"/>
             <xs:element name="function" type="function" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="set" type="set" minOccurs="0" maxOccurs="1"/>
 	</xs:choice>
     </xs:group>
 </xs:schema>
