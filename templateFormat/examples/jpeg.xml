@@ -38,10 +38,10 @@
 			<int name="tdta" size="1" endian="big" value="0"/>
 
 			<int name="componentID" size="1" endian="big" value="1"/>
-			<int name="tdta" size="1" endian="big" value="0"/>
+			<int name="tdta" size="1" endian="big" value="17"/>
 
 			<int name="componentID" size="1" endian="big" value="2"/>
-			<int name="tdta" size="1" endian="big" value="0"/>
+			<int name="tdta" size="1" endian="big" value="17"/>
 
 			<int name="ss" size="1" endian="big" value="0"/>
 			<int name="se" size="1" endian="big" value="63"/>
@@ -169,7 +169,7 @@
 
 	<type name="file">
 		<choice name="numOfComponents">
-			<custom name="1-comp" type="1-components" />
+			<custom name="1-comp" type="3-components" />
 			<custom name="3-comp" type="3-components" />
 		</choice>
 	</type>

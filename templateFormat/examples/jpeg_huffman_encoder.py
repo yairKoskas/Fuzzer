@@ -1,3 +1,4 @@
+from codecs import encode
 from bitarray import bitarray
 
 def encode_block(block, dc_huff, ac_huff):
@@ -7,6 +8,8 @@ def encode_block(block, dc_huff, ac_huff):
     # dc
     i = block[0]
     l = i.bit_length()
+    if l == 0:
+        l = 1
     encoded.extend(dc_huff[l])
     encoded.extend("{0:b}".format(i))
 
@@ -20,13 +23,35 @@ def encode_block(block, dc_huff, ac_huff):
 
     return encoded
 
-
-def encode_comp(data, dc_huff, ac_huff):
+def encode_grey(data):
     encoded = bitarray()
     # encode each block
     for i in range(len(data)//64):
         block = data[64*i: 64*(i+1)]
-        encoded.extend(encode_block(block,dc_huff, ac_huff))
+        encoded.extend(encode_block(block,DC_HUFF1, AC_HUFF1))
+
+    encoded = encoded.tobytes()
+    # add 0x00 after each 0xff
+    encoded_copy = encoded
+    j = 1
+    for i in range(len(encoded_copy)):
+        if encoded_copy[i] == 0xff:
+            encoded = encoded[:i+j] + b'\x00' + encoded[i+j:]
+            j += 1
+
+    return encoded
+
+def encode_color(data):
+    encoded = bitarray()
+    # encode each block
+    for i in range(len(data)//192):
+        block = data[192*i: 192*i+64]
+        encoded.extend(encode_block(block,DC_HUFF1, AC_HUFF1))
+        block = data[192*i+64: 192*i+128]
+        encoded.extend(encode_block(block,DC_HUFF2, AC_HUFF2))
+        block = data[192*i+128: 192*i+192]
+        encoded.extend(encode_block(block,DC_HUFF2, AC_HUFF2))
+
 
     encoded = encoded.tobytes()
 
@@ -39,16 +64,6 @@ def encode_comp(data, dc_huff, ac_huff):
             j += 1
 
     return encoded
-
-def encode_grey(data):
-    return encode_comp(data, DC_HUFF1, AC_HUFF1)
-
-def encode_color(data):
-    n = len(data)
-    c1 = encode_comp(data[:n], DC_HUFF1, AC_HUFF1)
-    c2 = encode_comp(data[n:2*n], DC_HUFF2, AC_HUFF2)
-    c3 = encode_comp(data[2*n:3*n], DC_HUFF2, AC_HUFF2)
-    return c1+c2+c3
             
 
 
