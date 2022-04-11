@@ -1,6 +1,8 @@
 import random
 
 from file_generator.generator_parser import GeneratorParser
+from file_generator import mutation_report
+
 from pathlib import Path
 import runner
 import os
@@ -20,6 +22,7 @@ class GeneratorFuzzer:
         self.crashes = 0
         self.crash_folder = crash_folder
         self.runner = runner.Runner()
+        self.extension = extension
 
         self.parser = GeneratorParser(self.template_format)
         self.file_creator = self.parser.get_creator()
@@ -29,25 +32,39 @@ class GeneratorFuzzer:
 
         # args to the target program
         self.args = [arg if arg != '<fuzzed>' else self.temp_file for arg in args]
+
+    '''
+    save the crash report contains the file content after mutation and the mutation report
+    '''
+    def crash_report(self, crash_file: Path, reports : list):
+        with open(crash_file, 'rb') as f1:
+            # write crash file
+            crash_path = os.path.join(self.crash_folder, f'{str(self.crashes)}.{self.extension}')
+            with open(crash_path, 'wb') as f2:
+                f2.write(f1.read())
+
+            # write crash report
+            report_path = os.path.join(self.crash_folder, f'report_{str(self.crashes)}.txt')
+            with open(report_path, 'w') as f2:
+                f2.write('\n'.join([str(report) for report in reports]))
+
+            self.crashes += 1
+
     '''
     fuzz a specific file
     returns - True if fuzzed file caused crash and False otherwise
     '''
-
     def fuzz_once(self):
         
         with open(self.temp_file, 'wb') as f:
-            f.write(self.file_creator.create_file(random.choice([0,1,2,4,8,16,32])))
+            reports, content = self.file_creator.create_file(random.choice([0,1,2,4,8,16,32]))
+            f.write(content)
 
         retcode = self.runner.run(self.program, self.args, self.timeout)
 
         # copy content to the crashed folder if neccesary
         if retcode != 0 and retcode != 1:
-            with open(self.temp_file, 'rb') as f1:
-                crash_path = os.path.join(self.crash_folder, str(self.crashes))
-                self.crashes += 1
-                with open(crash_path, 'wb') as f2:
-                    f2.write(f1.read())
+            self.crash_report(self.temp_file, reports)
 
             return True
 

@@ -1,4 +1,5 @@
 from file_generator import generator
+from file_generator import mutation_report
 
 '''
 An abstract class that represents a field in a file format (might be complex type field).
@@ -25,8 +26,9 @@ class Field:
 
     '''
     change the current value of the field (after the change it night be invalid)
+    return a report on the exact mutation that was done
     '''
-    def mutate(self):
+    def mutate(self) -> mutation_report.MutationReport:
         pass
 
     '''

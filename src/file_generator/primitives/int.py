@@ -3,6 +3,7 @@ from typing_extensions import Self
 
 from file_generator.field import Field
 from file_generator.generator import Generator
+from file_generator.mutation_report import MutationReport
 
 class Int(Field):
     def __init__(self, name, size, endian, value, relation):
@@ -29,7 +30,7 @@ class Int(Field):
 
     def mutate(self):
         mut = random.choice(self._mutations)
-        mut()
+        return mut()
             
 
     # mutations methods
@@ -39,16 +40,22 @@ class Int(Field):
     def _extreme_value(self):
         # 0 and signed\unsigned max\min int
         extreme_vals = [0, 2**(8*self._size)-1, 2**(8*self._size-1)-1,-2**(8*self._size-1)]
+        old_val = self._value
         self._value = random.choice(extreme_vals)
+        return MutationReport(self.name, f'change value from {old_val} to {self._value}')
 
     def _random_value(self):
+        old_val = self._value
         self._value = random.randint(0, 256**self._size-1)
+        return MutationReport(self.name, f'change value from {old_val} to {self._value}')
 
     def _inc_or_dec_value(self):
         if self._value == 256**self._size-1 or self._value == -2**(8*self._size-1) or self._value == 0:
             return
 
+        old_val = self._value
         self._value += random.choice([1,-1])
+        return MutationReport(self.name, f'change value from {old_val} to {self._value}')
     # ------------------------------------------------------
 
 

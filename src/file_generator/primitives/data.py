@@ -3,6 +3,8 @@ import random
 
 from file_generator.field import Field
 from file_generator.generator import Generator
+from file_generator.mutation_report import MutationReport
+
 
 '''
 A field for arbitrary data without certain structure.
@@ -27,7 +29,7 @@ class Data(Field):
 
     def mutate(self):
         mut = random.choice(self._mutations)
-        mut()
+        return mut()
 
     # mutations methods
     # ------------------------------------------------------
@@ -35,8 +37,11 @@ class Data(Field):
         if len(self._value) > 0:
             idx = random.randrange(0,len(self._value))
             new_value = list(self._value)
+            old_val = new_value[idx]
             new_value[idx] = random.randint(0,255)
             self._value = bytes(new_value)
+
+            return MutationReport(self.name, f'change byte in the index of {idx} from {old_val} to {self._value[idx]}')
 
     def _bit_flipping(self):
         ratio = random.choice([0.01, 0.1, 0.3])
@@ -50,7 +55,8 @@ class Data(Field):
         # convert mask to bytes
         mask = bytes([int("".join(map(str, mask[i:i+8])), 2) for i in range(0, len(mask), 8)])
 
-        return bytes([x^y for x,y in zip(self._value,mask)])
+        self._value = bytes([x^y for x,y in zip(self._value,mask)])
+        return MutationReport(self.name, f'flipped {ratio} of the bits bits')
     # ------------------------------------------------------
 
 

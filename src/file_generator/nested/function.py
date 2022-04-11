@@ -4,6 +4,7 @@ from importlib import import_module
 from file_generator.field import Field, ParentField
 from file_generator.generator import Generator
 from exception import FuzzerException
+from file_generator.mutation_report import MutationReport
 
 
 '''
@@ -43,7 +44,7 @@ class Function(ParentField):
 
     def mutate(self):
         mut = random.choice(self._mutations)
-        mut()
+        return mut()
 
     # mutations methods
     # ------------------------------------------------------
@@ -53,16 +54,23 @@ class Function(ParentField):
         if len(self._value) > 0:
             idx = random.randrange(0,len(self._value))
             new_value = list(self._value)
+            old_val = new_value[idx]
             new_value[idx] = random.randint(0,255)
             self._value = bytes(new_value)
 
+            return MutationReport(self.name, f'change byte in the index of {idx} from {old_val} to {self._value[idx]}')
+
     # mutate child and activate function
     def _mutate_child(self):
-        self._child.mutate()
+        report = self._child.mutate()
 
         self._value = self._function(self._child.value())
         if not isinstance(self._value, bytes):
             raise FuzzerException('function must return bytes object')
+
+        if report is not None:
+            report.add_parent(self.name)
+            return report
     # ------------------------------------------------------
 
 

@@ -3,6 +3,7 @@ import functools
 
 from file_generator.field import Field, ParentField
 from file_generator.generator import Generator
+from file_generator.mutation_report import MutationReport
 
 '''
 A generator for repeating on a generator multiple times.
@@ -36,7 +37,7 @@ class Repeat(ParentField):
 
     def mutate(self):
         mut = random.choice(self._mutations)
-        mut()
+        return mut()
 
     # mutations methods
     # ------------------------------------------------------
@@ -45,13 +46,18 @@ class Repeat(ParentField):
     def _delete_child(self):
         if len(self._children) > 0:
             idx = random.randint(0, len(self._children)-1)
-            self._children.pop(idx)
+            deleted_child = self._children.pop(idx)
+            return MutationReport(self.name, f'deleted {deleted_child.name}')
 
     # mutate random child
     def _mutate_child(self):
         if len(self._children) > 0:
             idx = random.randint(0,len(self._children)-1)
-            self._children[idx].mutate()
+            report = self._children[idx].mutate()
+            
+            if report is not None:
+                report.add_parent(self.name)
+                return report
     # ------------------------------------------------------
 
 
