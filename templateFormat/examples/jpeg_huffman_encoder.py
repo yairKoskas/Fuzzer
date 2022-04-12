@@ -1,27 +1,31 @@
 from codecs import encode
 from bitarray import bitarray
 
+def encode_element(element, huff_tbl):
+    encoded = bitarray()
+    # acts on each element in the block like it is DCT coeffient after quantization
+    l = element.bit_length()
+    if l == 0:
+        l = 1
+
+    encoded.extend(huff_tbl[(0,l)])
+    encoded.extend("{0:b}".format(element))
+    return encoded
+
 def encode_block(block, dc_huff, ac_huff):
     encoded = bitarray()
     # acts on each element in the block like it is DCT coeffient after quantization
 
     # dc
     i = block[0]
-    l = i.bit_length()
-    if l == 0:
-        l = 1
-    encoded.extend(dc_huff[l])
-    encoded.extend("{0:b}".format(i))
+    encoded.extend(encode_element(i, dc_huff))
 
     # ac
     for i in block[1:]:
-        l = i.bit_length()
-        if l == 0:
-            l = 1
-        encoded.extend(ac_huff[(0, l)])
-        encoded.extend("{0:b}".format(i))
+        encoded.extend(encode_element(i, ac_huff))
 
     return encoded
+    
 
 def encode_grey(data):
     encoded = bitarray()
@@ -65,21 +69,92 @@ def encode_color(data):
 
     return encoded
             
+def encode_dc(data):
+    encoded = bitarray()
+    # encode each block
+    for i in range(len(data)):
+        block = data[i]
+        encoded.extend(encode_element(block,DC_HUFF1))
 
+    encoded = encoded.tobytes()
+    # add 0x00 after each 0xff
+    encoded_copy = encoded
+    j = 1
+    for i in range(len(encoded_copy)):
+        if encoded_copy[i] == 0xff:
+            encoded = encoded[:i+j] + b'\x00' + encoded[i+j:]
+            j += 1
+
+    return encoded
+
+def encode_ac(data):
+    encoded = bitarray()
+    # encode each block
+    for i in range(len(data)):
+        block = data[i]
+        encoded.extend(encode_element(block,AC_HUFF1))
+
+    encoded = encoded.tobytes()
+    # add 0x00 after each 0xff
+    encoded_copy = encoded
+    j = 1
+    for i in range(len(encoded_copy)):
+        if encoded_copy[i] == 0xff:
+            encoded = encoded[:i+j] + b'\x00' + encoded[i+j:]
+            j += 1
+
+    return encoded
+
+def encode_dc_color(data):
+    encoded = bitarray()
+    # encode each block
+    for i in range(len(data)//3):
+        encoded.extend(encode_element(data[3*i],DC_HUFF1))
+        encoded.extend(encode_element(data[3*i+1],DC_HUFF2))
+        encoded.extend(encode_element(data[3*i+2],DC_HUFF2))
+
+    encoded = encoded.tobytes()
+    # add 0x00 after each 0xff
+    encoded_copy = encoded
+    j = 1
+    for i in range(len(encoded_copy)):
+        if encoded_copy[i] == 0xff:
+            encoded = encoded[:i+j] + b'\x00' + encoded[i+j:]
+            j += 1
+
+    return encoded
+
+def encode_ac_2(data):
+    encoded = bitarray()
+    # encode each block
+    for i in range(len(data)):
+        block = data[i]
+        encoded.extend(encode_element(block,AC_HUFF2))
+
+    encoded = encoded.tobytes()
+    # add 0x00 after each 0xff
+    encoded_copy = encoded
+    j = 1
+    for i in range(len(encoded_copy)):
+        if encoded_copy[i] == 0xff:
+            encoded = encoded[:i+j] + b'\x00' + encoded[i+j:]
+            j += 1
+
+    return encoded
 
 DC_HUFF1 = {
-            0:  '00',
-            1:  '010',
-            2:  '011',
-            3:  '100',
-            4:  '101',
-            5:  '110',
-            6:  '1110',
-            7:  '11110',
-            8:  '111110',
-            9:  '1111110',
-            10: '11111110',
-            11: '111111110'
+            (0, 0):  '00',
+            (0, 1):  '010',
+            (0, 2):  '011',
+            (0, 3):  '100',
+            (0, 4):  '101',
+            (0, 5):  '110',
+            (0, 6):  '1110',
+            (0, 7):  '11110',
+            (0, 8):  '111110',
+            (0, 9):  '1111110',
+            (0, 10): '11111110',
+            (0, 11): '111111110'
         }
 AC_HUFF1 = {
             'EOB': '1010',  # (0, 0)
@@ -263,18 +338,18 @@ AC_HUFF1 = {
         }
 
 DC_HUFF2 = {
-            0:  '00',
-            1:  '01',
-            2:  '10',
-            3:  '110',
-            4:  '1110',
-            5:  '11110',
-            6:  '111110',
-            7:  '1111110',
-            8:  '11111110',
-            9:  '111111110',
-            10: '1111111110',
-            11: '11111111110'
+            (0, 0):  '00',
+            (0, 1):  '01',
+            (0, 2):  '10',
+            (0, 3):  '110',
+            (0, 4):  '1110',
+            (0, 5):  '11110',
+            (0, 6):  '111110',
+            (0, 7):  '1111110',
+            (0, 8):  '11111110',
+            (0, 9):  '111111110',
+            (0, 10): '1111111110',
+            (0, 11): '11111111110'
         }
 AC_HUFF2 = {
             'EOB': '00',  # (0, 0)

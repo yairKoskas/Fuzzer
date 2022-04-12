@@ -12,14 +12,14 @@
 		</block>
 	</type>
 
-	<type name="scan" params="numOfComponents">
+	<type name="scan" params="numOfComponents, sStart, sEnd, startComp">
 		<data name="SOS" value="ffda"/>
 
 		<block name="scanInside">
 			<int name="length" size="2" endian="big"> <relation type="size" target="father"/></int>
 			<int name="components" size="1" endian="big" value="numOfComponents"/>
 
-			<set var_name="compID" value="0" />
+			<set var_name="compID" value="startComp" />
 			<repeat name="components" times="numOfComponents">
 				<block name="">
 					<int name="componentID" size="1" endian="big" value="var:compID"/>
@@ -28,8 +28,8 @@
 				</block>
 			</repeat>
 
-			<int name="ss" size="1" endian="big" value="0"/>
-			<int name="se" size="1" endian="big" value="63"/>
+			<int name="ss" size="1" endian="big" value="sStart"/>
+			<int name="se" size="1" endian="big" value="sEnd"/>
 			<int name="ahal" size="1" endian="big" value="0"/>
 		</block>
 	</type>
@@ -99,6 +99,29 @@
 
 	</type>
 
+	<type name="progFrameHeader" params="numOfComponents">
+		<data name="marker" value="ffc2"/>
+
+		<block name="frameHeaderInside">
+			<int name="length" size="2" endian="big"> <relation type="size" target="father"/></int>
+			<int name="precision" size="1" endian="big" value="8"/>
+			<int name="lines" size="2" endian="big" value="var:imgHeight"/>
+			<int name="columns" size="2" endian="big" value="var:imgWidth"/>
+			<int name="components" size="1" endian="big" value="numOfComponents"/>
+
+			<set var_name="compID" value="0" />
+			<repeat name="components" times="numOfComponents">
+				<block name="">
+					<int name="componentID" size="1" endian="big" value="var:compID"/>
+					<int name="sampeling" size="1" endian="big" value="17"/>
+					<int name="qt" size="1" endian="big" value="0"/>
+					<set var_name="compID" value="var:compID+1" />
+				</block>
+			</repeat>
+		</block>
+
+	</type>
+
 	<type name="1-components">
 		<data name="start" value="ffd8"/>
 		<custom name="app0" type="app0" />
@@ -106,7 +129,7 @@
 		<custom name="fh" type="frameHeader" params="1"/>
 		<custom name="hoffmanTableDC" type="hoffmanTable" params="0,00010501010101010100000000000000,000102030405060708090a0b"/>
 		<custom name="hoffmanTableAC" type="hoffmanTable" params="16,0002010303020403050504040000017d,01020300041105122131410613516107227114328191a1082342b1c11552d1f02433627282090a161718191a25262728292a3435363738393a434445464748494a535455565758595a636465666768696a737475767778797a838485868788898a92939495969798999aa2a3a4a5a6a7a8a9aab2b3b4b5b6b7b8b9bac2c3c4c5c6c7c8c9cad2d3d4d5d6d7d8d9dae1e2e3e4e5e6e7e8e9eaf1f2f3f4f5f6f7f8f9fa"/>
-		<custom name="scan" type="scan" params="1"/>
+		<custom name="scan" type="scan" params="1,0,63,0"/>
 		
 		<function name="data" module_name='templateFormat.examples.jpeg_huffman_encoder' function_name='encode_grey'>
 			<data name="imageData" size="var:(-(-imgWidth // 8))*(-(-imgHeight // 8))*64"/>
@@ -122,10 +145,64 @@
 		<custom name="fh" type="frameHeader" params="3"/>
 		<custom name="hoffmanTableDC" type="hoffmanTable" params="0,00010501010101010100000000000000,000102030405060708090a0b"/>
 		<custom name="hoffmanTableAC" type="hoffmanTable" params="16,0002010303020403050504040000017d,01020300041105122131410613516107227114328191a1082342b1c11552d1f02433627282090a161718191a25262728292a3435363738393a434445464748494a535455565758595a636465666768696a737475767778797a838485868788898a92939495969798999aa2a3a4a5a6a7a8a9aab2b3b4b5b6b7b8b9bac2c3c4c5c6c7c8c9cad2d3d4d5d6d7d8d9dae1e2e3e4e5e6e7e8e9eaf1f2f3f4f5f6f7f8f9fa"/>
-		<custom name="scan" type="scan" params="3"/>
+		<custom name="scan" type="scan" params="3,0,63,0"/>
 		
 		<function name="data" module_name='templateFormat.examples.jpeg_huffman_encoder' function_name='encode_color'>
 			<data name="imageData" size="var:(-(-imgWidth // 8))*(-(-imgHeight // 8))*64*3"/>
+		</function>
+			
+        <data name="end" value="ffd9"/>
+	</type>
+
+	<type name="1-components-progressive">
+		<data name="start" value="ffd8"/>
+		<custom name="app0" type="app0" />
+		<custom name="qt" type="quantizationTable" />
+		<custom name="fh" type="progFrameHeader" params="1"/>
+		<custom name="hoffmanTableDC" type="hoffmanTable" params="0,00010501010101010100000000000000,000102030405060708090a0b"/>
+		<custom name="hoffmanTableAC" type="hoffmanTable" params="16,0002010303020403050504040000017d,01020300041105122131410613516107227114328191a1082342b1c11552d1f02433627282090a161718191a25262728292a3435363738393a434445464748494a535455565758595a636465666768696a737475767778797a838485868788898a92939495969798999aa2a3a4a5a6a7a8a9aab2b3b4b5b6b7b8b9bac2c3c4c5c6c7c8c9cad2d3d4d5d6d7d8d9dae1e2e3e4e5e6e7e8e9eaf1f2f3f4f5f6f7f8f9fa"/>
+		
+        <custom name="scan" type="scan" params="1,0,0,0"/>
+		<function name="data" module_name='templateFormat.examples.jpeg_huffman_encoder' function_name='encode_dc'>
+			<data name="imageData" size="var:(-(-imgWidth // 8))*(-(-imgHeight // 8))"/>
+		</function>
+
+        <custom name="scan" type="scan" params="1,1,63,0"/>
+		<function name="data" module_name='templateFormat.examples.jpeg_huffman_encoder' function_name='encode_ac'>
+			<data name="imageData" size="var:(-(-imgWidth // 8))*(-(-imgHeight // 8))*63"/>
+		</function>
+			
+        <data name="end" value="ffd9"/>
+	</type>
+
+	<type name="3-components-progressive">
+		<data name="start" value="ffd8"/>
+		<custom name="app0" type="app0" />
+		<custom name="qt" type="quantizationTable" />
+		<custom name="fh" type="progFrameHeader" params="3"/>
+		<custom name="hoffmanTableDC" type="hoffmanTable" params="0,00010501010101010100000000000000,000102030405060708090a0b"/>
+		<custom name="hoffmanTableAC" type="hoffmanTable" params="16,0002010303020403050504040000017d,01020300041105122131410613516107227114328191a1082342b1c11552d1f02433627282090a161718191a25262728292a3435363738393a434445464748494a535455565758595a636465666768696a737475767778797a838485868788898a92939495969798999aa2a3a4a5a6a7a8a9aab2b3b4b5b6b7b8b9bac2c3c4c5c6c7c8c9cad2d3d4d5d6d7d8d9dae1e2e3e4e5e6e7e8e9eaf1f2f3f4f5f6f7f8f9fa"/>
+		<custom name="hoffmanTableDC2" type="hoffmanTable" params="1,00030101010101010101010000000000,000102030405060708090a0b"/>
+		<custom name="hoffmanTableAC2" type="hoffmanTable" params="17,00020102040403040705040400010277,000102031104052131061241510761711322328108144291a1b1c109233352f0156272d10a162434e125f11718191a262728292a35363738393a434445464748494a535455565758595a636465666768696a737475767778797a82838485868788898a92939495969798999aa2a3a4a5a6a7a8a9aab2b3b4b5b6b7b8b9bac2c3c4c5c6c7c8c9cad2d3d4d5d6d7d8d9dae2e3e4e5e6e7e8e9eaf2f3f4f5f6f7f8f9fa"/>
+        
+		<custom name="dc_scan" type="scan" params="3,0,0,0"/>
+		<function name="data" module_name='templateFormat.examples.jpeg_huffman_encoder' function_name='encode_dc_color'>
+			<data name="imageData" size="var:(-(-imgWidth // 8))*(-(-imgHeight // 8))*3"/>
+		</function>
+
+        <custom name="comp0_scan" type="scan" params="1,1,63,0"/>
+		<function name="data" module_name='templateFormat.examples.jpeg_huffman_encoder' function_name='encode_ac'>
+			<data name="imageData" size="var:(-(-imgWidth // 8))*(-(-imgHeight // 8))*63"/>
+		</function>
+
+		<custom name="comp1_scan" type="scan" params="1,1,63,1"/>
+		<function name="data" module_name='templateFormat.examples.jpeg_huffman_encoder' function_name='encode_ac_2'>
+			<data name="imageData" size="var:(-(-imgWidth // 8))*(-(-imgHeight // 8))*63"/>
+		</function>
+
+		<custom name="comp2_scan" type="scan" params="1,1,63,2"/>
+		<function name="data" module_name='templateFormat.examples.jpeg_huffman_encoder' function_name='encode_ac_2'>
+			<data name="imageData" size="var:(-(-imgWidth // 8))*(-(-imgHeight // 8))*63"/>
 		</function>
 			
         <data name="end" value="ffd9"/>
@@ -135,6 +212,8 @@
 		<choice name="numOfComps">
 			<custom name="1_comp" type="1-components" />
 			<custom name="3_comp" type="3-components" />
+			<custom name="1_comp_prog" type="1-components-progressive" />
+			<custom name="3_comp_prog" type="3-components-progressive" />
 		</choice>
 	</type>
 </file>
