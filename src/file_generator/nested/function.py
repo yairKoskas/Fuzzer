@@ -11,16 +11,18 @@ from file_generator.mutation_report import MutationReport
 A function that acts on some data.
 '''
 class Function(ParentField):
-    def __init__(self, name, field, function):
+    def __init__(self, name, field, function, params):
         super().__init__(name)
         self.name = name
         self._child = field
         self._function = function
+        self._params = params
 
         # set the parents of all children to self
         self._child.set_parent(self)
 
-        self._value = self._function(self._child.value())
+        params = [self._child.value()] + [int(x) for x in self._params]
+        self._value = self._function(*params)
         if not isinstance(self._value, bytes):
             raise FuzzerException('function must return bytes object')
 
@@ -38,7 +40,8 @@ class Function(ParentField):
     def set_to_relation(self):
         self._child.set_to_relation()
 
-        self._value = self._function(self._child.value())
+        params = [self._child.value()] + [int(x) for x in self._params]
+        self._value = self._function(*params)
         if not isinstance(self._value, bytes):
             raise FuzzerException('function must return bytes object')
 
@@ -71,7 +74,8 @@ class Function(ParentField):
         if report is not None:
             report.add_parent(self.name)
             return report
-    # ------------------------------------------------------
+
+# ------------------------------------------------------
 
 
 class FunctionGenerator(Generator):
@@ -81,12 +85,18 @@ class FunctionGenerator(Generator):
     name - id of the object.
     module_name - name of the module where the function located.
     function_name - name of the function.
+    params - paremeters to the function (after the data)
     '''
-    def __init__(self, generator: Generator, module_name : str, function_name : str, name=None):
+    def __init__(self, generator: Generator, module_name : str, function_name : str, params=[], name=None):
         super().__init__(name)
         self.name = name
         self._generator = generator
         self._function = self._import_function(module_name, function_name)
+        self._params = params
+
+        # check if amount of params match the number of arguments required
+        if len(params) != self._function.__code__.co_argcount - 1:
+            raise FuzzerException(f'function {function_name} requires {self._function.__code__.co_argcount - 1} arguments')
 
     # import function fro a module
     def _import_function(self, module_name : str, function_name : str):
@@ -100,4 +110,4 @@ class FunctionGenerator(Generator):
         return getattr(module, function_name)
 
     def get_field(self) -> Function:
-        return Function(self.name, self._generator.get_field(), self._function)
+        return Function(self.name, self._generator.get_field(), self._function, self._params)

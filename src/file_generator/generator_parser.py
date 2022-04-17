@@ -65,6 +65,15 @@ class GeneratorParser:
             if child.tag == 'var':
                 self._vars[child.attrib['name']] = var.Var(**child.attrib)
 
+    '''
+    convert an attribute of an element into parameters for the generator
+    '''
+    def _parse_attribute(self, attr : str):
+        if attr.startswith('var:'):
+            expression = attr.split(':')[1]
+
+            return var_expression.VarExpression(expression, self._vars)
+        return attr
 
     '''
     convert the attributes of an element into parameters for the generator
@@ -76,10 +85,7 @@ class GeneratorParser:
         res = attributes.copy()
         # replace 'var:x' attributes with the corresponding variable
         for attr in res:
-            if res[attr].startswith('var:'):
-                expression = res[attr].split(':')[1]
-
-                res[attr] = var_expression.VarExpression(expression, self._vars)
+            res[attr] = self._parse_attribute(res[attr])
 
         return res
     
@@ -184,8 +190,21 @@ class GeneratorParser:
             gen = self.get_generator(child)
             if gen is not None:
                 generators.append(gen)
+
+        # parse the params attribute
+        if 'params' in xml_element.attrib:
+            params = xml_element.attrib['params'].split(',')
+            params = list(map(lambda x: x.lstrip(), params))
+            params = list(map(self._parse_attribute, params))
+            del xml_element.attrib['params']
+
+        else:
+            params = []
+
         args = self._parse_attributes(xml_element.attrib)
         args['generator'] = generators[0]
+        args['params'] = params
+            
         return function.FunctionGenerator(**args)
 
     '''
