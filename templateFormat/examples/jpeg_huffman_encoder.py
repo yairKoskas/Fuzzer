@@ -1,12 +1,23 @@
 from codecs import encode
 from bitarray import bitarray
 
+
+# add 0x00 after each 0xff
+def byte_stuffing(data):
+    data_copy = data
+    j = 1
+    for i in range(len(data_copy)):
+        if data_copy[i] == 0xff:
+            data = data[:i+j] + b'\x00' + data[i+j:]
+            j += 1
+
+    return data
+
 def encode_element(element, huff_tbl):
     encoded = bitarray()
     # acts on each element in the block like it is DCT coeffient after quantization
     l = element.bit_length()
-    if l == 0:
-        l = 1
+    l = l if l !=0  else 1
 
     encoded.extend(huff_tbl[(0,l)])
     encoded.extend("{0:b}".format(element))
@@ -24,8 +35,7 @@ def encode_block(block, dc_huff, ac_huff):
     for i in block[1:]:
         encoded.extend(encode_element(i, ac_huff))
 
-    return encoded
-    
+    return encoded 
 
 def encode_grey(data):
     encoded = bitarray()
@@ -35,15 +45,7 @@ def encode_grey(data):
         encoded.extend(encode_block(block,DC_HUFF1, AC_HUFF1))
 
     encoded = encoded.tobytes()
-    # add 0x00 after each 0xff
-    encoded_copy = encoded
-    j = 1
-    for i in range(len(encoded_copy)):
-        if encoded_copy[i] == 0xff:
-            encoded = encoded[:i+j] + b'\x00' + encoded[i+j:]
-            j += 1
-
-    return encoded
+    return byte_stuffing(encoded)
 
 def encode_color(data):
     encoded = bitarray()
@@ -58,17 +60,9 @@ def encode_color(data):
 
 
     encoded = encoded.tobytes()
+    return byte_stuffing(encoded)
 
-    # add 0x00 after each 0xff
-    encoded_copy = encoded
-    j = 1
-    for i in range(len(encoded_copy)):
-        if encoded_copy[i] == 0xff:
-            encoded = encoded[:i+j] + b'\x00' + encoded[i+j:]
-            j += 1
-
-    return encoded
-            
+# functions for progressive jpeg       
 def encode_dc(data):
     encoded = bitarray()
     # encode each block
@@ -77,33 +71,20 @@ def encode_dc(data):
         encoded.extend(encode_element(block,DC_HUFF1))
 
     encoded = encoded.tobytes()
-    # add 0x00 after each 0xff
-    encoded_copy = encoded
-    j = 1
-    for i in range(len(encoded_copy)):
-        if encoded_copy[i] == 0xff:
-            encoded = encoded[:i+j] + b'\x00' + encoded[i+j:]
-            j += 1
+    return byte_stuffing(encoded)
 
-    return encoded
+def encode_ac(data, table):
+    huff_tbl = AC_HUFF1 if table == 0 else AC_HUFF2
 
-def encode_ac(data):
     encoded = bitarray()
+
     # encode each block
     for i in range(len(data)):
         block = data[i]
-        encoded.extend(encode_element(block,AC_HUFF1))
+        encoded.extend(encode_element(block,huff_tbl))
 
     encoded = encoded.tobytes()
-    # add 0x00 after each 0xff
-    encoded_copy = encoded
-    j = 1
-    for i in range(len(encoded_copy)):
-        if encoded_copy[i] == 0xff:
-            encoded = encoded[:i+j] + b'\x00' + encoded[i+j:]
-            j += 1
-
-    return encoded
+    return byte_stuffing(encoded)
 
 def encode_dc_color(data):
     encoded = bitarray()
@@ -114,33 +95,7 @@ def encode_dc_color(data):
         encoded.extend(encode_element(data[3*i+2],DC_HUFF2))
 
     encoded = encoded.tobytes()
-    # add 0x00 after each 0xff
-    encoded_copy = encoded
-    j = 1
-    for i in range(len(encoded_copy)):
-        if encoded_copy[i] == 0xff:
-            encoded = encoded[:i+j] + b'\x00' + encoded[i+j:]
-            j += 1
-
-    return encoded
-
-def encode_ac_2(data):
-    encoded = bitarray()
-    # encode each block
-    for i in range(len(data)):
-        block = data[i]
-        encoded.extend(encode_element(block,AC_HUFF2))
-
-    encoded = encoded.tobytes()
-    # add 0x00 after each 0xff
-    encoded_copy = encoded
-    j = 1
-    for i in range(len(encoded_copy)):
-        if encoded_copy[i] == 0xff:
-            encoded = encoded[:i+j] + b'\x00' + encoded[i+j:]
-            j += 1
-
-    return encoded
+    return byte_stuffing(encoded)
 
 DC_HUFF1 = {
             (0, 0):  '00',

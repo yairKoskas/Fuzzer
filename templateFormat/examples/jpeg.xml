@@ -12,7 +12,7 @@
 		</block>
 	</type>
 
-	<type name="scan" params="numOfComponents, sStart, sEnd, startComp">
+	<type name="scan" params="numOfComponents, sStart, sEnd, ah, al, startComp">
 		<data name="SOS" value="ffda"/>
 
 		<block name="scanInside">
@@ -30,7 +30,7 @@
 
 			<int name="ss" size="1" endian="big" value="sStart"/>
 			<int name="se" size="1" endian="big" value="sEnd"/>
-			<int name="ahal" size="1" endian="big" value="0"/>
+			<int name="ahal" size="1" endian="big" value="var:(ah * 16) + al"/>
 		</block>
 	</type>
 
@@ -129,7 +129,7 @@
 		<custom name="fh" type="frameHeader" params="1"/>
 		<custom name="hoffmanTableDC" type="hoffmanTable" params="0,00010501010101010100000000000000,000102030405060708090a0b"/>
 		<custom name="hoffmanTableAC" type="hoffmanTable" params="16,0002010303020403050504040000017d,01020300041105122131410613516107227114328191a1082342b1c11552d1f02433627282090a161718191a25262728292a3435363738393a434445464748494a535455565758595a636465666768696a737475767778797a838485868788898a92939495969798999aa2a3a4a5a6a7a8a9aab2b3b4b5b6b7b8b9bac2c3c4c5c6c7c8c9cad2d3d4d5d6d7d8d9dae1e2e3e4e5e6e7e8e9eaf1f2f3f4f5f6f7f8f9fa"/>
-		<custom name="scan" type="scan" params="1,0,63,0"/>
+		<custom name="scan" type="scan" params="1,0,63,0,0,0"/>
 		
 		<function name="data" module_name='templateFormat.examples.jpeg_huffman_encoder' function_name='encode_grey'>
 			<data name="imageData" size="var:(-(-imgWidth // 8))*(-(-imgHeight // 8))*64"/>
@@ -145,13 +145,113 @@
 		<custom name="fh" type="frameHeader" params="3"/>
 		<custom name="hoffmanTableDC" type="hoffmanTable" params="0,00010501010101010100000000000000,000102030405060708090a0b"/>
 		<custom name="hoffmanTableAC" type="hoffmanTable" params="16,0002010303020403050504040000017d,01020300041105122131410613516107227114328191a1082342b1c11552d1f02433627282090a161718191a25262728292a3435363738393a434445464748494a535455565758595a636465666768696a737475767778797a838485868788898a92939495969798999aa2a3a4a5a6a7a8a9aab2b3b4b5b6b7b8b9bac2c3c4c5c6c7c8c9cad2d3d4d5d6d7d8d9dae1e2e3e4e5e6e7e8e9eaf1f2f3f4f5f6f7f8f9fa"/>
-		<custom name="scan" type="scan" params="3,0,63,0"/>
+		<custom name="scan" type="scan" params="3,0,63,0,0,0"/>
 		
 		<function name="data" module_name='templateFormat.examples.jpeg_huffman_encoder' function_name='encode_color'>
 			<data name="imageData" size="var:(-(-imgWidth // 8))*(-(-imgHeight // 8))*64*3"/>
 		</function>
 			
         <data name="end" value="ffd9"/>
+	</type>
+
+
+	<!-- some different scanning patterns for progressive jpeg -->
+	<type name="color-pattern-1">
+		<custom name="dc_scan" type="scan" params="3,0,0,0,0,0"/>
+		<function name="data" module_name='templateFormat.examples.jpeg_huffman_encoder' function_name='encode_dc_color'>
+			<data name="imageData" size="var:(-(-imgWidth // 8))*(-(-imgHeight // 8))*3"/>
+		</function>
+
+        <custom name="comp0_scan" type="scan" params="1,1,63,0,0,0"/>
+		<function name="data" module_name='templateFormat.examples.jpeg_huffman_encoder' function_name='encode_ac' params="0">
+			<data name="imageData" size="var:(-(-imgWidth // 8))*(-(-imgHeight // 8))*63"/>
+		</function>
+
+		<custom name="comp1_scan" type="scan" params="1,1,63,0,0,1"/>
+		<function name="data" module_name='templateFormat.examples.jpeg_huffman_encoder' function_name='encode_ac' params="1">
+			<data name="imageData" size="var:(-(-imgWidth // 8))*(-(-imgHeight // 8))*63"/>
+		</function>
+
+		<custom name="comp2_scan" type="scan" params="1,1,63,0,0,2"/>
+		<function name="data" module_name='templateFormat.examples.jpeg_huffman_encoder' function_name='encode_ac' params="1">
+			<data name="imageData" size="var:(-(-imgWidth // 8))*(-(-imgHeight // 8))*63"/>
+		</function>
+	</type>
+
+	<type name="color-pattern-2">
+		<custom name="dc_scan" type="scan" params="3,0,0,0,1,0"/>
+		<function name="data" module_name='templateFormat.examples.jpeg_huffman_encoder' function_name='encode_dc_color'>
+			<data name="imageData" size="var:(-(-imgWidth // 8))*(-(-imgHeight // 8))*3"/>
+		</function>
+
+		<custom name="dc_scan" type="scan" params="3,0,0,1,0,0"/>
+		<function name="byte_stuffing" module_name="templateFormat.examples.jpeg_huffman_encoder" function_name="byte_stuffing">
+			<data name="imageData" size="var:((-(-imgWidth // 8))*(-(-imgHeight // 8))*3)//8+1"/>
+		</function>
+		
+
+        <custom name="comp0_scan" type="scan" params="1,1,40,0,0,0"/>
+		<function name="data" module_name='templateFormat.examples.jpeg_huffman_encoder' function_name='encode_ac' params="0">
+			<data name="imageData" size="var:(-(-imgWidth // 8))*(-(-imgHeight // 8))*40"/>
+		</function>
+
+		<custom name="comp0_scan" type="scan" params="1,41,63,0,0,0"/>
+		<function name="data" module_name='templateFormat.examples.jpeg_huffman_encoder' function_name='encode_ac' params="0">
+			<data name="imageData" size="var:(-(-imgWidth // 8))*(-(-imgHeight // 8))*23"/>
+		</function>
+
+		<custom name="comp1_scan" type="scan" params="1,1,63,0,0,1"/>
+		<function name="data" module_name='templateFormat.examples.jpeg_huffman_encoder' function_name='encode_ac' params="1">
+			<data name="imageData" size="var:(-(-imgWidth // 8))*(-(-imgHeight // 8))*63"/>
+		</function>
+
+		<custom name="comp2_scan1" type="scan" params="1,1,63,0,0,2"/>
+		<function name="data" module_name='templateFormat.examples.jpeg_huffman_encoder' function_name='encode_ac' params="1">
+			<data name="imageData" size="var:(-(-imgWidth // 8))*(-(-imgHeight // 8))*63"/>
+		</function>
+
+	</type>
+
+	<type name="color-pattern-3">
+		<custom name="dc_scan" type="scan" params="3,0,0,0,2,0"/>
+		<function name="data" module_name='templateFormat.examples.jpeg_huffman_encoder' function_name='encode_dc_color'>
+			<data name="imageData" size="var:(-(-imgWidth // 8))*(-(-imgHeight // 8))*3"/>
+		</function>
+
+		<custom name="dc_scan" type="scan" params="3,0,0,2,1,0"/>
+		<function name="byte_stuffing" module_name="templateFormat.examples.jpeg_huffman_encoder" function_name="byte_stuffing">
+			<data name="imageData" size="var:((-(-imgWidth // 8))*(-(-imgHeight // 8))*3)//8+1"/>
+		</function>
+
+		<custom name="dc_scan" type="scan" params="3,0,0,1,0,0"/>
+		<function name="byte_stuffing" module_name="templateFormat.examples.jpeg_huffman_encoder" function_name="byte_stuffing">
+			<data name="imageData" size="var:((-(-imgWidth // 8))*(-(-imgHeight // 8))*3)//8+1"/>
+		</function>
+
+        <custom name="comp0_scan1" type="scan" params="1,1,40,0,0,0"/>
+		<function name="data" module_name='templateFormat.examples.jpeg_huffman_encoder' function_name='encode_ac' params="0">
+			<data name="imageData" size="var:(-(-imgWidth // 8))*(-(-imgHeight // 8))*40"/>
+		</function>
+
+		<custom name="comp0_scan2" type="scan" params="1,41,62,0,0,0"/>
+		<function name="data" module_name='templateFormat.examples.jpeg_huffman_encoder' function_name='encode_ac' params="0">
+			<data name="imageData" size="var:(-(-imgWidth // 8))*(-(-imgHeight // 8))*22"/>
+		</function>
+
+		<custom name="comp0_scan2" type="scan" params="1,63,63,0,0,0"/>
+		<function name="data" module_name='templateFormat.examples.jpeg_huffman_encoder' function_name='encode_ac' params="0">
+			<data name="imageData" size="var:(-(-imgWidth // 8))*(-(-imgHeight // 8))"/>
+		</function>
+
+		<custom name="comp1_scan" type="scan" params="1,1,63,0,0,1"/>
+		<function name="data" module_name='templateFormat.examples.jpeg_huffman_encoder' function_name='encode_ac' params="1">
+			<data name="imageData" size="var:(-(-imgWidth // 8))*(-(-imgHeight // 8))*63"/>
+		</function>
+
+		<custom name="comp2_scan" type="scan" params="1,1,63,0,0,2"/>
+		<function name="data" module_name='templateFormat.examples.jpeg_huffman_encoder' function_name='encode_ac' params="1">
+			<data name="imageData" size="var:(-(-imgWidth // 8))*(-(-imgHeight // 8))*63"/>
+		</function>
 	</type>
 
 	<type name="1-components-progressive">
@@ -162,13 +262,13 @@
 		<custom name="hoffmanTableDC" type="hoffmanTable" params="0,00010501010101010100000000000000,000102030405060708090a0b"/>
 		<custom name="hoffmanTableAC" type="hoffmanTable" params="16,0002010303020403050504040000017d,01020300041105122131410613516107227114328191a1082342b1c11552d1f02433627282090a161718191a25262728292a3435363738393a434445464748494a535455565758595a636465666768696a737475767778797a838485868788898a92939495969798999aa2a3a4a5a6a7a8a9aab2b3b4b5b6b7b8b9bac2c3c4c5c6c7c8c9cad2d3d4d5d6d7d8d9dae1e2e3e4e5e6e7e8e9eaf1f2f3f4f5f6f7f8f9fa"/>
 		
-        <custom name="scan" type="scan" params="1,0,0,0"/>
+        <custom name="scan" type="scan" params="1,0,0,0,0,0"/>
 		<function name="data" module_name='templateFormat.examples.jpeg_huffman_encoder' function_name='encode_dc'>
 			<data name="imageData" size="var:(-(-imgWidth // 8))*(-(-imgHeight // 8))"/>
 		</function>
 
-        <custom name="scan" type="scan" params="1,1,63,0"/>
-		<function name="data" module_name='templateFormat.examples.jpeg_huffman_encoder' function_name='encode_ac'>
+        <custom name="scan" type="scan" params="1,1,63,0,0,0"/>
+		<function name="data" module_name='templateFormat.examples.jpeg_huffman_encoder' function_name='encode_ac' params="0">
 			<data name="imageData" size="var:(-(-imgWidth // 8))*(-(-imgHeight // 8))*63"/>
 		</function>
 			
@@ -185,26 +285,13 @@
 		<custom name="hoffmanTableDC2" type="hoffmanTable" params="1,00030101010101010101010000000000,000102030405060708090a0b"/>
 		<custom name="hoffmanTableAC2" type="hoffmanTable" params="17,00020102040403040705040400010277,000102031104052131061241510761711322328108144291a1b1c109233352f0156272d10a162434e125f11718191a262728292a35363738393a434445464748494a535455565758595a636465666768696a737475767778797a82838485868788898a92939495969798999aa2a3a4a5a6a7a8a9aab2b3b4b5b6b7b8b9bac2c3c4c5c6c7c8c9cad2d3d4d5d6d7d8d9dae2e3e4e5e6e7e8e9eaf2f3f4f5f6f7f8f9fa"/>
         
-		<custom name="dc_scan" type="scan" params="3,0,0,0"/>
-		<function name="data" module_name='templateFormat.examples.jpeg_huffman_encoder' function_name='encode_dc_color'>
-			<data name="imageData" size="var:(-(-imgWidth // 8))*(-(-imgHeight // 8))*3"/>
-		</function>
+		
+		<choice name="pattern">
+			<custom name="pattern1" type="color-pattern-1" />
+			<custom name="pattern2" type="color-pattern-2" />
+			<custom name="pattern3" type="color-pattern-3" />
+		</choice>
 
-        <custom name="comp0_scan" type="scan" params="1,1,63,0"/>
-		<function name="data" module_name='templateFormat.examples.jpeg_huffman_encoder' function_name='encode_ac'>
-			<data name="imageData" size="var:(-(-imgWidth // 8))*(-(-imgHeight // 8))*63"/>
-		</function>
-
-		<custom name="comp1_scan" type="scan" params="1,1,63,1"/>
-		<function name="data" module_name='templateFormat.examples.jpeg_huffman_encoder' function_name='encode_ac_2'>
-			<data name="imageData" size="var:(-(-imgWidth // 8))*(-(-imgHeight // 8))*63"/>
-		</function>
-
-		<custom name="comp2_scan" type="scan" params="1,1,63,2"/>
-		<function name="data" module_name='templateFormat.examples.jpeg_huffman_encoder' function_name='encode_ac_2'>
-			<data name="imageData" size="var:(-(-imgWidth // 8))*(-(-imgHeight // 8))*63"/>
-		</function>
-			
         <data name="end" value="ffd9"/>
 	</type>
 

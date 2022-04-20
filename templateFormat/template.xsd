@@ -124,6 +124,7 @@
         <xs:attribute name="name" type="xs:string" use="required"/>
         <xs:attribute name="module_name" type="xs:string" use="required"/>
         <xs:attribute name="function_name" type="xs:string" use="required"/>
+        <xs:attribute name="params" type="xs:string"/>
     </xs:complexType>
 
     <xs:group name="types">
