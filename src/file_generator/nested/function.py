@@ -67,7 +67,8 @@ class Function(ParentField):
     def _mutate_child(self):
         report = self._child.mutate()
 
-        self._value = self._function(self._child.value())
+        params = [self._child.value()] + [int(x) for x in self._params]
+        self._value = self._function(*params)
         if not isinstance(self._value, bytes):
             raise FuzzerException('function must return bytes object')
 
