@@ -16,7 +16,9 @@ class Type(ParentField):
         self.name = name
         self._children = fields
         self._child_names = [f.name for f in self._children]
-        self._mutations = [self._mutate_child, self._mutate_child, self._delete_child]
+
+        self._mutations = [self._mutate_child, self._delete_child]
+        self._weights = [7, 1]
 
         # set the parents of all children to self
         for f in self._children:
@@ -66,7 +68,7 @@ class Type(ParentField):
             f.set_to_relation()
 
     def mutate(self):
-        mut = random.choice(self._mutations)
+        mut = random.choices(self._mutations, weights=self._weights)[0]
         return mut()
 
     # mutations methods
