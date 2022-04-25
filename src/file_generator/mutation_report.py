@@ -19,5 +19,5 @@ class MutationReport:
 
     def __str__(self) -> str:
         mut_at = 'mutation at :' + ' -> '.join(self._parents[::-1])
-        return f'{mut_at}\n{self._description}'
+        return f'{mut_at}\n{self._description}\n'
         
