@@ -41,27 +41,27 @@ class Type(ParentField):
         return len(field)
 
     # return offset of an element by name
-    def _get_offset_by_name(self, name):
+    def get_offset_by_name(self, name):
         idx = self._child_names.index(name)
         return sum(len(f) for f in self._children[:idx])
 
     # return absolute offset of an element by name
-    def _get_abs_offset_by_name(self, name):
+    def get_abs_offset_by_name(self, name):
         if self._parent is None:
             return self._get_offset_by_name(name)
 
-        rel = Relation("absOffset", self.name)
-        return self._parent.resolve_relation(rel) + self._get_offset_by_name(name)
+        return self._parent._get_abs_offset_by_name(self.name) + self._get_offset_by_name(name)
 
     def resolve_relation(self, relation):
-        if relation.type == "size":
-            return self._get_size_by_name(relation.target)
-        if relation.type == "offset":
-            return self._get_offset_by_name(relation.target)
-        if relation.type == "absOffset":
-            return self._get_abs_offset_by_name(relation.target)
-        
-        raise FuzzerException('relation type not supported')
+        # look for the target
+        target_name = relation.target
+
+        if target_name == 'father':
+            target = self
+        else:
+            target = self._children[self._child_names.index(target_name)]
+
+        return relation.rsolve(target)
 
     def set_to_relation(self):
         for f in self._children:

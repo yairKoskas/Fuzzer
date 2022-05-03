@@ -1,14 +1,6 @@
 from dataclasses import Field
 from file_generator import field
-
-'''
-A class that holds information about relations.
-'''
-class Relation:
-
-    def __init__(self, type, target) -> None:
-        self.type = type
-        self.target = target
+from file_generator import relation
 
 '''
 An abstract class for generator.
@@ -36,13 +28,13 @@ class Generator:
     '''
     set the relation of the generator
     '''
-    def set_relation(self, relation: 'Relation'):
+    def set_relation(self, relation: 'relation.Relation'):
         self._has_relation = True
         self._relation = relation
 
     '''
     get the relation of the generator
     '''
-    def get_relation(self) -> 'Relation':
+    def get_relation(self) -> 'relation.Relation':
         if self._has_relation:
             return self._relation

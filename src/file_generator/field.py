@@ -53,6 +53,18 @@ class Field:
     def set_parent(self, parent: 'ParentField'):
         self._parent = parent
 
+    '''
+    get the offset of the field in the parent field
+    '''
+    def get_offset(self):
+        return self._parent.get_offset_by_name(self._name)
+
+    '''
+    get the absolute offset of the field in the file
+    '''
+    def get_absolute_offset(self):
+        return self._parent.get_abs_offset_by_name(self._name)
+
 '''
 A field that have children fields that he have to reslove relations for
 '''
@@ -67,4 +79,16 @@ class ParentField(Field):
     get a relation and return the required value for this relation.
     '''
     def resolve_relation(self, relation:'generator.Relation') -> int:
+        pass
+
+    '''
+    get the offset of a child element by name
+    '''
+    def get_offset_by_name(self, name):
+        pass
+
+    '''
+    get the absolute offset of a child element by name
+    '''
+    def get_abs_offset_by_name(self, name):
         pass

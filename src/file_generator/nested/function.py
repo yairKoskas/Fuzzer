@@ -99,7 +99,7 @@ class FunctionGenerator(Generator):
         if len(params) != self._function.__code__.co_argcount - 1:
             raise FuzzerException(f'function {function_name} requires {self._function.__code__.co_argcount - 1} arguments')
 
-    # import function fro a module
+    # import function from a module
     def _import_function(self, module_name : str, function_name : str):
         try:
             module = import_module(module_name)
