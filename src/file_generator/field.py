@@ -92,3 +92,16 @@ class ParentField(Field):
     '''
     def get_abs_offset_by_name(self, name):
         pass
+
+
+    '''
+    access a child field by name
+    '''
+    def __getitem__(self, name):
+        pass
+    
+    '''
+    check if have child with name
+    '''
+    def __contains__(self, name):
+        pass

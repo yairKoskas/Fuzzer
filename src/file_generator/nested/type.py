@@ -59,13 +59,29 @@ class Type(ParentField):
         if target_name == 'father':
             target = self
         else:
-            target = self._children[self._child_names.index(target_name)]
+            target = self[target_name]
 
         return relation.resolve(target)
 
     def set_to_relation(self):
         for f in self._children:
             f.set_to_relation()
+
+    def __getitem__(self, name):
+        for child in self._children:
+            if child.name == name:
+                return child
+            if isinstance(child, ParentField) and name in child:
+                return child[name]
+
+        return None
+    
+    def __contains__(self, name):
+        for child in self._children:
+            if child.name == name or (isinstance(child, ParentField) and name in child):
+                return True
+
+        return False
 
     def mutate(self):
         mut = random.choices(self._mutations, weights=self._weights)[0]

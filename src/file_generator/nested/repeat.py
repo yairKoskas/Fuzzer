@@ -13,6 +13,7 @@ class Repeat(ParentField):
         super().__init__(name)
         self.name = name
         self._children = fields
+        self._child_names = [f.name for f in self._children]
 
         self._mutations = [self._mutate_child, self._mutate_child, self._delete_child]
 
@@ -34,6 +35,22 @@ class Repeat(ParentField):
     def set_to_relation(self):
         for f in self._children:
             f.set_to_relation()
+
+    def __getitem__(self, name):
+        for child in self._children:
+            if child.name == name:
+                return child
+            if isinstance(child, ParentField) and name in child:
+                return child[name]
+
+        return None
+    
+    def __contains__(self, name):
+        for child in self._children:
+            if child.name == name or (isinstance(child, ParentField) and name in child):
+                return True
+
+        return False
 
     def mutate(self):
         mut = random.choice(self._mutations)

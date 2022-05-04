@@ -45,6 +45,12 @@ class Function(ParentField):
         if not isinstance(self._value, bytes):
             raise FuzzerException('function must return bytes object')
 
+    def __getitem__(self, name):
+        return self._child if name == self._child._name else None
+    
+    def __contains__(self, name):
+        return name == self._child._name
+
     def mutate(self):
         mut = random.choice(self._mutations)
         return mut()
