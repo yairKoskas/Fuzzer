@@ -1,7 +1,7 @@
 import random
 
 from file_generator.field import Field
-from file_generator.generator import Generator, Relation
+from file_generator.generator import Generator, relation
 
 '''
 Used for padding.

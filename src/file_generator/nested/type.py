@@ -2,7 +2,7 @@ import random
 import functools
 
 from file_generator.field import ParentField
-from file_generator.generator import Generator, Relation
+from file_generator.generator import Generator, relation
 from exception import FuzzerException
 from file_generator.mutation_report import MutationReport
 
@@ -48,9 +48,9 @@ class Type(ParentField):
     # return absolute offset of an element by name
     def get_abs_offset_by_name(self, name):
         if self._parent is None:
-            return self._get_offset_by_name(name)
+            return self.get_offset_by_name(name)
 
-        return self._parent._get_abs_offset_by_name(self.name) + self._get_offset_by_name(name)
+        return self._parent.get_abs_offset_by_name(self.name) + self._get_offset_by_name(name)
 
     def resolve_relation(self, relation):
         # look for the target
@@ -61,7 +61,7 @@ class Type(ParentField):
         else:
             target = self._children[self._child_names.index(target_name)]
 
-        return relation.rsolve(target)
+        return relation.resolve(target)
 
     def set_to_relation(self):
         for f in self._children:

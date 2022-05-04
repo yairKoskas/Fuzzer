@@ -22,8 +22,8 @@ class Relation:
 
 class SizeRelation(Relation):
 
-    def __init__(self, target_name) -> None:
-        super().__init__('size', target_name)
+    def __init__(self, type, target) -> None:
+        super().__init__('size', target)
 
     '''
     Resolve the value of the relation given the target field
@@ -33,8 +33,8 @@ class SizeRelation(Relation):
 
 class OffsetRelation(Relation):
 
-    def __init__(self, target_name) -> None:
-        super().__init__('offset', target_name)
+    def __init__(self, type, target) -> None:
+        super().__init__('offset', target)
 
     '''
     Resolve the value of the relation given the target field
@@ -44,8 +44,8 @@ class OffsetRelation(Relation):
 
 class AbsOffsetRelation(Relation):
 
-    def __init__(self, target_name) -> None:
-        super().__init__('abs_offset', target_name)
+    def __init__(self, type, target) -> None:
+        super().__init__('abs_offset', target)
 
     '''
     Resolve the value of the relation given the target field
@@ -55,8 +55,8 @@ class AbsOffsetRelation(Relation):
 
 class FunctionRelation(Relation):
 
-    def __init__(self, target_name, module_name, function_name) -> None:
-        super().__init__('function', target_name)
+    def __init__(self, type, target, module_name, function_name) -> None:
+        super().__init__('function', target)
         self._function = self._import_function(module_name, function_name)
 
     '''
@@ -75,3 +75,11 @@ class FunctionRelation(Relation):
             raise FuzzerException(f'function {function_name} does not exist in module {module_name}')
 
         return getattr(module, function_name)
+
+# a dictionary that maps relation names to their classes
+relation_by_name = {
+    'size' : SizeRelation,
+    'offset' : OffsetRelation,
+    'absOffset' : AbsOffsetRelation,
+    'function' : FunctionRelation
+}

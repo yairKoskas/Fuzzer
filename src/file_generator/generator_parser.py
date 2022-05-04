@@ -3,12 +3,13 @@ from pathlib import Path
 import copy
 
 from file_generator.generator_factory import GeneratorFactory
-from file_generator.generator import Generator, Relation
+from file_generator.generator import Generator, relation
 from file_generator.nested import type, choice, repeat, function
 from file_generator import var
 from file_generator import var_expression
 from file_generator import file_creator
 from file_generator.primitives import set_var
+from file_generator import relation
 from exception import FuzzerException
 
 
@@ -219,7 +220,8 @@ class GeneratorParser:
             # add relation
             for child in xml_element:
                 if child.tag == 'relation':
-                    gen.set_relation(Relation(**child.attrib))
+                    rel = relation.relation_by_name[child.attrib['type']](**child.attrib)
+                    gen.set_relation(rel)
 
             return gen
 
