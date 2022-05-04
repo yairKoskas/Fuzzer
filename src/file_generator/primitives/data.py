@@ -25,7 +25,7 @@ class Data(Field):
 
     def set_to_relation(self):
         if self._has_relation:
-            self._value = bytes(self._parent.resolve_relation(self._relation))
+            self._value = self._parent.resolve_relation(self._relation).to_bytes(self._size, 'big')
 
     def mutate(self):
         mut = random.choice(self._mutations)
