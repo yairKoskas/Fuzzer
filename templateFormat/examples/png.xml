@@ -1,0 +1,99 @@
+<file name="png">
+    <var name="imgWidth" min_val="1" max_val="50"/>
+    <var name="imgHeight" min_val="1" max_val="50"/>
+
+    <type name="header_chunk" params="bit_depth, color_type">
+        <int name="chunk_length" size="4" endian="big">
+            <relation type="size" target="chunk_data"/>
+        </int>
+
+        <block name="chunk_inside">
+            <str name="chunk_type" value="IHDR"/>
+
+            <block name="chunk_data">
+                <int name="width" size="4" endian="big" value="var:imgWidth"/>
+                <int name="height" size="4" endian="big" value="var:imgHeight"/>
+                <int name="bit_depth" size="1" value="bit_depth"/>
+                <int name="color_type" size="1" value="color_type"/>
+                <int name="compression_method" size="1" value="0"/>
+                <int name="filter_method" size="1" value="0"/>
+                <int name="interlance_method" size="1" value="0"/>
+            </block>
+        </block>
+
+        <data name="chunk_crc" size="4">
+            <relation type="function" target="chunk_inside" module_name='templateFormat.examples.crc32' function_name='crc32'/>
+        </data>
+    </type>
+
+    <type name="data_chunk">
+        <int name="chunk_length" size="4" endian="big">
+            <relation type="size" target="chunk_data"/>
+        </int>
+
+        <block name="chunk_inside">
+            <str name="chunk_type" value="IDAT"/>
+
+            <function name="chunk_data" module_name="templateFormat.examples.png_compress" function_name="compress_data" params="var:imgWidth">
+                <data name="img_data" size="var:imgWidth*imgHeight"/>
+            </function>
+        </block>
+
+        <data name="chunk_crc" size="4">
+            <relation type="function" target="chunk_inside" module_name='templateFormat.examples.crc32' function_name='crc32'/>
+        </data>
+    </type>
+
+    <type name="pallete_chunk">
+        <int name="chunk_length" size="4" endian="big">
+            <relation type="size" target="chunk_data"/>
+        </int>
+
+        <block name="chunk_inside">
+            <str name="chunk_type" value="PLTE"/>
+
+            <data name="chunk_data" size="768"/>
+        </block>
+
+        <data name="chunk_crc" size="4">
+            <relation type="function" target="chunk_inside" module_name='templateFormat.examples.crc32' function_name='crc32'/>
+        </data>
+    </type>
+
+    <type name="gamma_chunk">
+        <int name="chunk_length" size="4" endian="big">
+            <relation type="size" target="chunk_data"/>
+        </int>
+
+        <block name="chunk_inside">
+            <str name="chunk_type" value="gAMA"/>
+
+            <data name="chunk_data" size="4"/>
+        </block>
+
+        <data name="chunk_crc" size="4">
+            <relation type="function" target="chunk_inside" module_name='templateFormat.examples.crc32' function_name='crc32'/>
+        </data>
+    </type>
+
+    <type name="end_chunk">
+        <int name="chunk_length" size="4" endian="big" value="0"/>
+
+        <str name="chunk_type" value="IEND"/>
+
+        <data name="chunk_crc" size="4">
+            <relation type="function" target="chunk_type" module_name='templateFormat.examples.crc32' function_name='crc32'/>
+        </data>
+    </type>
+
+    <type name="file">
+        <!--magic value-->
+        <data name="magic" value="89504E470D0A1A0A"/>
+
+        <custom name="chunk_header" type="header_chunk" params="8,3"/>
+        <custom name="chunk_gamma" type="gamma_chunk"/>
+        <custom name="chunk_pallete" type="pallete_chunk"/>
+        <custom name="chunk_data" type="data_chunk"/>
+        <custom name="chunk_end" type="end_chunk"/>
+    </type>
+</file>
