@@ -5,7 +5,7 @@ from file_generator.field import ParentField
 from file_generator.generator import Generator, relation
 from exception import FuzzerException
 from file_generator.mutation_report import MutationReport
-
+import copy
 
 '''
 custom type, combine a group of generators.
@@ -17,8 +17,8 @@ class Type(ParentField):
         self._children = fields
         self._child_names = [f.name for f in self._children]
 
-        self._mutations = [self._mutate_child, self._delete_child]
-        self._weights = [7, 1]
+        self._mutations = [self._mutate_child, self._delete_child, self._duplicate_child]
+        self._weights = [10, 1, 1]
 
         # set the parents of all children to self
         for f in self._children:
@@ -85,7 +85,13 @@ class Type(ParentField):
 
     def mutate(self):
         mut = random.choices(self._mutations, weights=self._weights)[0]
-        return mut()
+        report = mut()
+
+        # set relations with probality
+        if random.randint(0,3) == 0:
+            self.set_to_relation()
+
+        return report
 
     # mutations methods
     # ------------------------------------------------------
@@ -96,6 +102,14 @@ class Type(ParentField):
             idx = random.randint(0, len(self._children)-1)
             deleted_child = self._children.pop(idx)
             return MutationReport(self.name, f'deleted {deleted_child.name}')
+
+    # duplicate random child
+    def _duplicate_child(self):
+        if len(self._children) > 0:
+            idx = random.randint(0, len(self._children)-1)
+            dup_child = copy.deepcopy(self._children[idx])
+            self._children.insert(idx+1, dup_child)
+            return MutationReport(self.name, f'duplicated {dup_child.name}')
 
     # mutate random child
     def _mutate_child(self):
