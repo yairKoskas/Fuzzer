@@ -1,6 +1,6 @@
 <file name="bmp">
-    <var name="imgWidth" max_val="200"/>
-    <var name="imgHeight" max_val="200"/>
+    <var name="imgWidth" min_val="0" max_val="200"/>
+    <var name="imgHeight" min_val="1" max_val="200"/>
 
 	<type name="24-bits">
         <int name="pixelArrayOffset" size="4"> 
