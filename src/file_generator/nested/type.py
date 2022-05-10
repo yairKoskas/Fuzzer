@@ -50,7 +50,7 @@ class Type(ParentField):
         if self._parent is None:
             return self.get_offset_by_name(name)
 
-        return self._parent.get_abs_offset_by_name(self.name) + self._get_offset_by_name(name)
+        return self.parent.get_abs_offset_by_name(self.name) + self.get_offset_by_name(name)
 
     def resolve_relation(self, relation):
         # look for the target
@@ -58,8 +58,10 @@ class Type(ParentField):
 
         if target_name == 'father':
             target = self
-        else:
+        elif target_name in self:
             target = self[target_name]
+        else:
+            return 0
 
         return relation.resolve(target)
 
