@@ -3,7 +3,7 @@
     <var name="imgHeight" min_val="1" max_val="30"/>
     <var name="alphaUsed" min_val="0" max_val="1"/>
     <var name="colorUsed" min_val="0" max_val="1"/>
-    <var name="interlanceMode" min_val="1" max_val="1"/>
+    <var name="interlanceMode" min_val="0" max_val="1"/>
 
     <type name="header_chunk" params="bit_depth">
         <int name="chunk_length" size="4" endian="big">
