@@ -18,13 +18,14 @@ class BlockEvaluator(CoverageEvaluator):
         self.frida_script = self.frida_session.create_script(self.script_code)
         self.frida_script.load()
         self.frida_script.exports.clearcoverage()
-        self.frida_script.exports.attachStalker()
+        self.frida_script.exports.settarget()
         self.frida_session.resume()
         start = time.time()
         while time.time() - start < timeout:
             stalker_attached, stalker_finished = self.frida_script.exports.checkstalker()
         if not stalker_finished:
             print("Stalker didn't finish after timeout, couldn't get coverage")
+
             # todo check if crashed, if it crashed, return the exit code, else return 1
 
         coverage_data = self.frida_script.exports.getcoverage()
