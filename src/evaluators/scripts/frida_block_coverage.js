@@ -9,7 +9,7 @@ debug("loading script...")
 var stalker_attached = false;
 var stalker_finished = false;
 
-var whitelist = ['all'];
+// var whitelist = ['all'];
 
 var gc_cnt = 0;
 
@@ -65,7 +65,7 @@ rpc.exports = {
 
     // initialize the address of the target function (to-be-hooked)
     // and attach the Interceptor
-    attachStalker: function() {
+    attachstalker: function() {
         stalker_attached = true
         stalker_finished = false
         Stalker.queueCapacity = 100000000
@@ -74,11 +74,7 @@ rpc.exports = {
         debugCov("follow")
         Stalker.follow(Process.getCurrentThreadId(), {
             events: {
-                call: false,
-                ret: false,
-                exec: false,
-                block: true,
-                compile: false
+				compile: true
             },
             onReceive: function (events) {
                 debugCov("onReceive: len(stalker_events)=" + stalker_events.length)
@@ -87,14 +83,14 @@ rpc.exports = {
         });
     },
     settarget: function(target) {
-        debug("Target: " + target)
         target_function = ptr(target)
 
         Interceptor.attach(target_function, {
             onEnter: function (args) {
-                //debug('Called ------func-------: ');
-                //debug("Stalker.queueCapacity=" + Stalker.queueCapacity)
-                //debug("Stalker.queueDrainInterval=" + Stalker.queueDrainInterval)
+                debug('Called ------func-------: ');
+                debug("Stalker.queueCapacity=" + Stalker.queueCapacity)
+                debug("Stalker.queueDrainInterval=" + Stalker.queueDrainInterval)
+				debug('Function: ' + target_function)
                 stalker_attached = true
                 stalker_finished = false
                 Stalker.queueCapacity = 100000000
@@ -103,11 +99,7 @@ rpc.exports = {
                 debugCov("follow")
                 Stalker.follow(Process.getCurrentThreadId(), {
                     events: {
-                        call: false,
-                        ret: false,
-                        exec: false,
-                        block: false,
-                        compile: true
+						compile: true
                     },
                     onReceive: function (events) {
                         debugCov("onReceive: len(stalker_events)=" + stalker_events.length)
