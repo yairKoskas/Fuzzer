@@ -136,6 +136,8 @@ class TypeGenerator(Generator):
     def get_field(self) -> bytes:
         fields = [gen.get_field() for gen in self._generators]
         fields = list(filter(None, fields))
+        if len(fields) == 0:
+            return None
         return Type(self._name, fields)
 
     '''

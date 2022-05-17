@@ -100,4 +100,6 @@ class RepeatGenerator(Generator):
     def get_field(self) -> bytes:
         times = int(self._times) if self._times is not None else random.randint(int(self._min_times), int(self._max_times))
         fields = [self._generator.get_field() for _ in range(times)]
+        if len(fields) == 0:
+            return None
         return Repeat(self._name, fields)
