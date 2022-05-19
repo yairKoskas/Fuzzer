@@ -3,13 +3,15 @@ from file_generator.primitives import int
 from file_generator.primitives import str
 from file_generator.nested import type
 from file_generator.primitives import padding
+from file_generator.primitives import none
 
 mapping = {
     'int': int.IntGenerator,
     'str': str.StrGenerator,
     'type': type.TypeGenerator,
     'data': data.DataGenerator,
-    'padding': padding.PaddingGenerator
+    'padding': padding.PaddingGenerator,
+    'none': none.NoneGenerator
 }
 
 
