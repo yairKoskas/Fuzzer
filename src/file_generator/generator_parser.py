@@ -197,15 +197,18 @@ class GeneratorParser:
             params = xml_element.attrib['params'].split(',')
             params = list(map(lambda x: x.lstrip(), params))
             params = list(map(self._parse_attribute, params))
-            del xml_element.attrib['params']
+
+            attr = copy.copy(xml_element.attrib)
+            del attr['params']
 
         else:
+            attr = xml_element.attrib
             params = []
 
-        args = self._parse_attributes(xml_element.attrib)
+        args = self._parse_attributes(attr)
         args['generator'] = generators[0]
         args['params'] = params
-            
+
         return function.FunctionGenerator(**args)
 
     '''
