@@ -3,7 +3,9 @@
     <var name="imgHeight" min_val="1" max_val="30"/>
     <var name="alphaUsed" min_val="0" max_val="1"/>
     <var name="colorUsed" min_val="0" max_val="1"/>
-    <var name="interlanceMode" min_val="0" max_val="1"/>
+    <var name="palleteUsed" min_val="0" max_val="1"/>
+    <var name="interlanceMode" min_val="0" max_val="0"/>
+    <var name="pixelLen" min_val="0" max_val="0"/>
 
     <type name="header_chunk" params="bit_depth">
         <int name="chunk_length" size="4" endian="big">
@@ -17,7 +19,7 @@
                 <int name="width" size="4" endian="big" value="var:imgWidth"/>
                 <int name="height" size="4" endian="big" value="var:imgHeight"/>
                 <int name="bit_depth" size="1" value="bit_depth"/>
-                <int name="color_type" size="1" value="var:2*colorUsed+4*alphaUsed"/>
+                <int name="color_type" size="1" value="var:2*colorUsed+4*alphaUsed+palleteUsed"/>
                 <int name="compression_method" size="1" value="0"/>
                 <int name="filter_method" size="1" value="0"/>
                 <int name="interlance_method" size="1" value="var:interlanceMode"/>
@@ -37,8 +39,8 @@
         <block name="chunk_inside">
             <str name="chunk_type" value="IDAT"/>
 
-            <function name="chunk_data" module_name="templateFormat.examples.png_compress" function_name="compress_data" params="var:imgHeight, var:imgWidth, var:(1+colorUsed*2+alphaUsed), var:interlanceMode">
-                <data name="img_data" size="var:imgWidth*imgHeight*(1+colorUsed*2+alphaUsed)"/>
+            <function name="chunk_data" module_name="templateFormat.examples.png_compress" function_name="compress_data" params="var:imgHeight, var:imgWidth, var:pixelLen, var:interlanceMode">
+                <data name="img_data" size="var:imgWidth*imgHeight*pixelLen"/>
             </function>
         </block>
 
@@ -64,6 +66,7 @@
     </type>
 
     <type name="gamma_chunk">
+
         <int name="chunk_length" size="4" endian="big">
             <relation type="size" target="chunk_data"/>
         </int>
@@ -79,6 +82,84 @@
         </data>
     </type>
 
+    <type name="background_chunk">
+        <int name="chunk_length" size="4" endian="big">
+            <relation type="size" target="chunk_data"/>
+        </int>
+
+        <block name="chunk_inside">
+            <str name="chunk_type" value="bKGD"/>
+
+            <int name="chunk_data" size="var:1 if palleteUsed else 6 if colorUsed else 2" min_val="0" max_val="256" endian="big"/>
+        </block>
+        
+        <data name="chunk_crc" size="4">
+            <relation type="function" target="chunk_inside" module_name='templateFormat.examples.crc32' function_name='crc32'/>
+        </data>
+    </type>
+
+    <type name="histogram_chunk">
+        <int name="chunk_length" size="4" endian="big">
+            <relation type="size" target="chunk_data"/>
+        </int>
+
+        <block name="chunk_inside">
+            <str name="chunk_type" value="hIST"/>
+
+            <block name="chunk_data">
+                <int name="histogram" size="4" endian="big"/>
+            </block>
+        </block>
+
+        <data name="chunk_crc" size="4">
+            <relation type="function" target="chunk_inside" module_name='templateFormat.examples.crc32' function_name='crc32'/>
+        </data>
+    </type>
+
+    <type name="physics_chunk">
+        <int name="chunk_length" size="4" endian="big">
+            <relation type="size" target="chunk_data"/>
+        </int>
+
+        <block name="chunk_inside">
+            <str name="chunk_type" value="pHYs"/>
+
+            <block name="chunk_data">
+                <int name="pixels_per_unit_x" size="4" endian="big"/>
+                <int name="pixels_per_unit_y" size="4" endian="big"/>
+                <int name="unit_specifier" size="1" min_val="0" max_val="1" endian="big"/>
+            </block>
+        </block>
+
+        <data name="chunk_crc" size="4">
+            <relation type="function" target="chunk_inside" module_name='templateFormat.examples.crc32' function_name='crc32'/>
+        </data>
+    </type>
+
+    <type name="time_chunk">
+        <int name="chunk_length" size="4" endian="big">
+            <relation type="size" target="chunk_data"/>
+        </int>
+
+        <block name="chunk_inside">
+            <str name="chunk_type" value="tIME"/>
+
+            <block name="chunk_data">
+                <int name="tear" size="2" max_val="2022" endian="big"/>
+                <int name="month" size="1" min_val="1" max_val="12" endian="big"/>
+                <int name="day" size="1" min_val="1" max_val="31" endian="big"/>
+                <int name="hour" size="1" max_val="23" endian="big"/>
+                <int name="minute" size="1" max_val="59" endian="big"/>
+                <int name="second" size="1" max_val="60" endian="big"/>
+            </block>
+        </block>
+
+        <data name="chunk_crc" size="4">
+            <relation type="function" target="chunk_inside" module_name='templateFormat.examples.crc32' function_name='crc32'/>
+        </data>
+    </type>
+
+
     <type name="end_chunk">
         <int name="chunk_length" size="4" endian="big" value="0"/>
 
@@ -89,13 +170,94 @@
         </data>
     </type>
 
-    <type name="file">
+
+    <type name="png_with_pallete">
+        <set var_name="palleteUsed" value="1" />
+        <set var_name="colorUsed" value="1" />
+        <set var_name="alphaUsed" value="0" />
+        <set var_name="pixelLen" value="1" />
+
         <!--magic value-->
         <data name="magic" value="89504E470D0A1A0A"/>
 
         <custom name="chunk_header" type="header_chunk" params="8"/>
-        <custom name="chunk_gamma" type="gamma_chunk"/>
+        
+
+        <choice name="gamma_optional">
+            <custom name="chunk_gamma" type="gamma_chunk"/>
+            <none/>
+        </choice>
+
+
+        <custom name="pallete_chunk" type="pallete_chunk"/>
+
+        <choice name="background_optional">
+            <custom name="background_chunk" type="background_chunk"/>
+            <none/>
+        </choice>
+
+        
+        <choice name="hist_optional">
+            <custom name="histogram_chunk" type="histogram_chunk"/>
+            <none/>
+        </choice>
+
+        <choice name="physics_optional">
+            <custom name="physics_chunk" type="physics_chunk"/>
+            <none/>
+        </choice>
+
+        <choice name="time_optional">
+            <custom name="time_chunk" type="time_chunk"/>
+            <none/>
+        </choice>
+    
         <custom name="chunk_data" type="data_chunk"/>
         <custom name="chunk_end" type="end_chunk"/>
+    </type>
+    
+    <type name="png_without_pallete">
+        <set var_name="palleteUsed" value="0" />
+        <set var_name="pixelLen" value="var:(1+colorUsed*2+alphaUsed)" />
+
+        <!--magic value-->
+        <data name="magic" value="89504E470D0A1A0A"/>
+
+        <custom name="chunk_header" type="header_chunk" params="8"/>
+        
+        <choice name="gamma_optional">
+            <custom name="chunk_gamma" type="gamma_chunk"/>
+            <none/>
+        </choice>
+
+        <choice name="background_optional">
+            <custom name="background_chunk" type="background_chunk"/>
+            <none/>
+        </choice>
+
+        <choice name="hist_optional">
+            <custom name="histogram_chunk" type="histogram_chunk"/>
+            <none/>
+        </choice>
+
+        <choice name="physics_optional">
+            <custom name="physics_chunk" type="physics_chunk"/>
+            <none/>
+        </choice>
+
+        <choice name="time_optional">
+            <custom name="time_chunk" type="time_chunk"/>
+            <none/>
+        </choice>
+    
+        <custom name="chunk_data" type="data_chunk"/>
+        <custom name="chunk_end" type="end_chunk"/>
+    </type>
+    
+    <type name="file">
+        <choice name="is_palette_used">
+            <custom name="no" type="png_without_pallete" />
+            <custom name="yes" type="png_with_pallete" />
+        </choice>
     </type>
 </file>

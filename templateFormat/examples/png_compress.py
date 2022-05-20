@@ -1,4 +1,5 @@
 import zlib
+import random
 
 # make a scan over the data
 # return the number of bytes read and the scan data
@@ -7,14 +8,14 @@ def _scan(data: bytes, rows : int, columns : int, pixel_size : int) -> (int, byt
         return 0, b''
 
     new_data = b''
+    filter_type = random.randint(0,4)
     for row in range(0, columns*pixel_size*rows, columns*pixel_size):
-        new_data += b'\x00' + data[row:row + columns*pixel_size]
+        new_data += bytes([filter_type]) + data[row:row + columns*pixel_size]
 
     return columns*pixel_size*rows, new_data
 
 def compress_data(data: bytes, rows : int, columns : int,  pixel_size : int, interlance_mode : int) -> bytes:
     new_data = b''
-
     if interlance_mode == 0:
         _, new_data = _scan(data, rows, columns, pixel_size)
         
