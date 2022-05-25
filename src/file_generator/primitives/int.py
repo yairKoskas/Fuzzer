@@ -49,13 +49,16 @@ class Int(Field):
         self._value = random.randint(0, 256**self._size-1)
         return MutationReport(self.name, f'change value from {old_val} to {self._value}')
 
+    # increment or decrement by a small amount
     def _inc_or_dec_value(self):
-        if self._value == 256**self._size-1 or self._value == -2**(8*self._size-1) or self._value == 0:
+        amount = random.choice([1,-1, 2,-2,4,-4,8,-8,16,-16])
+
+        if self._value >= 256**self._size-amount or self._value < -amount:
             return
 
         old_val = self._value
-        self._value += random.choice([1,-1])
-        return MutationReport(self.name, f'change value from {old_val} to {self._value}')
+        self._value += amount
+        return MutationReport(self.name, f'change value from {old_val} to {self._value} by increamenting by {amount}')
     # ------------------------------------------------------
 
 
