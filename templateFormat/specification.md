@@ -81,6 +81,10 @@ Example
 ```
 This will pad the content to be a multiple of 8. In our example the value of `pad` will be `'\xff'*5`.
 
+### none
+`none` basically does nothing. can be used for example to fill a `choice` tag to make optional field.<br>
+
+
 ## Using non-primitive types
 There are some nested types which contains other elements:
 
@@ -137,12 +141,35 @@ Example
 <custom name="name" type="type1">
 ```
 
+### function
+`function` to activate a function on some data in order to maintain more complex structure. The function acts on the field it contains.<br>
+The function must get as fisrt parameter a bytes object (the data to act on), and can get additional int type parameters.
+the function must return bytes object.
+
+Attributes:
+- `module_name`: the name of the module where the function located (should be full python-style path from the directory you run the fuzzer).
+- `function_name`: name of the function within the module.
+- `params`: parameters to the functions after the data, seperated by comma
+
+Example
+```python
+def foo(data : bytes, param1 : int, param2 : int) -> bytes:
+    # do some stuff
+    return stuff
+```
+```xml
+<function name="function" module_name="path.to.foo" function_name="foo" params="1,2">
+    <data name="data_to_function" size="20">
+</function>
+```
+
 ## Relations
 You can set the value of a `str`, `int` or `data` tag to be a relation, i.e be dependent on another field. A relation can be defined with the `relation` tag inside the element tag. A relation tag should have `type` attribute, which specify the kind of relation, and `target`, which specify the name of the field to relate to.<br />
 The types of relation:
 - `size` - size of a certain field.
 - `offset` - offset of a certain field in the current block.
 - `absOffset` - offset of a certain field in the whole file.
+- `function` - set the field value to be `f(target)` where f is a given function. this type of relation requires 2 additional attributes:`module_name` and `function_name` (used exactly the same as in the `function` field).
 
 Example:
 ```xml
@@ -180,3 +207,19 @@ Example:
 </file>
 ```
 In this example, the value of the `timesOfHello` integer will be equal to the number of times `hello` string is repeated.
+
+### Changing variables
+You can change a variable in the process of generating the data with the `set_var` field, it contains 2 attributes: `var_name` and `value`. This can be used to create simple loops and relations between variables.<br>
+Example:
+```xml
+<file name="fileFormat">
+    <var name="num" min_val="1" max_val="1"/>
+
+    <type name="file">
+        <repeat name="one_to_three" times="3">
+            <int name="num" value="var:num"/>
+            <set_var var_name="num" value="var:num+1"/>
+        </repeat>
+    </type>
+</file>
+```
