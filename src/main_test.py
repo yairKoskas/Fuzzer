@@ -18,8 +18,11 @@ def main():
     pars = generator_parser.GeneratorParser(template_file)
 
     creator = pars.get_creator()
+    report, file = creator.create_file(0)
     with open(f'output.{extension}', 'wb') as f:
-        f.write(creator.create_file(0))
+        f.write(file)
+    with open(f'report.txt', 'w') as f:
+        f.write(str(report))
 
 
 if __name__ == "__main__":
