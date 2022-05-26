@@ -4,7 +4,7 @@
     <var name="alphaUsed" min_val="0" max_val="1"/>
     <var name="colorUsed" min_val="0" max_val="1"/>
     <var name="palleteUsed" min_val="0" max_val="1"/>
-    <var name="interlanceMode" min_val="0" max_val="0"/>
+    <var name="interlanceMode" min_val="0" max_val="1"/>
     <var name="pixelLen" min_val="0" max_val="0"/>
 
     <type name="header_chunk" params="bit_depth">
@@ -90,7 +90,7 @@
         <block name="chunk_inside">
             <str name="chunk_type" value="bKGD"/>
 
-            <int name="chunk_data" size="var:1 if palleteUsed else 6 if colorUsed else 2" min_val="0" max_val="256" endian="big"/>
+            <int name="chunk_data" size="var:1 if palleteUsed else 6 if colorUsed else 2" min_val="0" max_val="255" endian="big"/>
         </block>
         
         <data name="chunk_crc" size="4">
