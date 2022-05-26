@@ -4,6 +4,8 @@ import sys
 import signal
 import subprocess
 from factories.coverage_evaluator_factory import CoverageEvaluatorFactory
+from evaluators import power_plan_evaluator
+
 
 class Runner:
 
@@ -50,9 +52,10 @@ class CoverageRunner:
         if not os.path.isfile(path) or not os.access(path, os.X_OK):
             raise Exception('File doesn\'t exist or isn\'t executable')
         states, proc_code = self.coverage_evaluator.get_coverage(path, args, timeout)
+        power_plan_value = power_plan_evaluator.get_value_percentage(states, saved_states)
         if len(states - saved_states) > 0:
             # save the new states in the set
             saved_states |= states
             # signal to the fuzzer that the program reached a new state
             proc_code = 2
-        return proc_code
+        return proc_code, power_plan_value
