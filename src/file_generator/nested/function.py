@@ -13,20 +13,26 @@ A function that acts on some data.
 class Function(ParentField):
     def __init__(self, name, field, function, params):
         super().__init__(name)
-        self.name = name
         self._child = field
         self._function = function
         self._params = params
 
-        # set the parents of all children to self
+        # set the parents of child to self
         self._child.set_parent(self)
 
+        self._activate()
+
+        self._mutations = [self._mutate_child, self._mutate_data]
+
+    '''
+    Activate the function and update the value accordingaly.
+    '''
+    def _activate(self):
+        # first parameter to child is the child value
         params = [self._child.value()] + [int(x) for x in self._params]
         self._value = self._function(*params)
         if not isinstance(self._value, bytes):
             raise FuzzerException('function must return bytes object')
-
-        self._mutations = [self._mutate_child, self._mutate_data]
 
     def __len__(self):
         return len(self._value)
@@ -40,10 +46,7 @@ class Function(ParentField):
     def set_to_relation(self):
         self._child.set_to_relation()
 
-        params = [self._child.value()] + [int(x) for x in self._params]
-        self._value = self._function(*params)
-        if not isinstance(self._value, bytes):
-            raise FuzzerException('function must return bytes object')
+        self._activate()
 
     def __getitem__(self, name):
         return self._child if name == self._child._name else None
@@ -67,19 +70,16 @@ class Function(ParentField):
             new_value[idx] = random.randint(0,255)
             self._value = bytes(new_value)
 
-            return MutationReport(self.name, f'change byte in the index of {idx} from {old_val} to {self._value[idx]}')
+            return MutationReport(self._name, f'change byte in the index of {idx} from {old_val} to {self._value[idx]}')
 
     # mutate child and activate function
     def _mutate_child(self):
         report = self._child.mutate()
 
-        params = [self._child.value()] + [int(x) for x in self._params]
-        self._value = self._function(*params)
-        if not isinstance(self._value, bytes):
-            raise FuzzerException('function must return bytes object')
+        self._activate()
 
         if report is not None:
-            report.add_parent(self.name)
+            report.add_parent(self._name)
             return report
 
 # ------------------------------------------------------

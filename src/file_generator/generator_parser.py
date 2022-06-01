@@ -2,7 +2,7 @@ import xml.etree.ElementTree as Et
 from pathlib import Path
 import copy
 
-from file_generator.generator_factory import GeneratorFactory
+
 from file_generator.generator import Generator, relation
 from file_generator.nested import type, choice, repeat, function
 from file_generator import var
@@ -11,12 +11,26 @@ from file_generator import file_creator
 from file_generator.primitives import set_var
 from file_generator import relation
 from exception import FuzzerException
+from file_generator.primitives.int import IntGenerator
+from file_generator.primitives.str import StrGenerator
+from file_generator.primitives.data import DataGenerator
+from file_generator.primitives.padding import PaddingGenerator
+from file_generator.primitives.none import NoneGenerator
 
 
 class GeneratorParser:
     """
     path - the path to the template format xml file
     """
+
+    # mapping of primitive generators by their names
+    primitive_generators = {
+        'int': IntGenerator,
+        'str': StrGenerator,
+        'data': DataGenerator,
+        'padding': PaddingGenerator,
+        'none': NoneGenerator
+    }
 
     def __init__(self, path: Path):
         # will throw ParseError if path isn't a valid xml file
@@ -216,8 +230,8 @@ class GeneratorParser:
     returns - a generator
     '''
     def _handle_primitive_generator(self, xml_element: Et.Element):
-        generator_class = GeneratorFactory.get_generator(xml_element.tag)
-        if generator_class:
+        if xml_element.tag in GeneratorParser.primitive_generators:
+            generator_class = GeneratorParser.primitive_generators[xml_element.tag]
             gen = generator_class(**self._parse_attributes(xml_element.attrib))
 
             # add relation
@@ -227,6 +241,9 @@ class GeneratorParser:
                     gen.set_relation(rel)
 
             return gen
+
+        else:
+            raise FuzzerException(f'unknown field type {xml_element.tag}')
 
     '''
     get a generator for an xml element

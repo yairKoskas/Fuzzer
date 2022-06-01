@@ -2,15 +2,17 @@ import random
 
 from file_generator.field import Field
 from file_generator.generator import Generator, relation
+from file_generator.relation import Relation
 
 '''
 Used for padding.
+Padding is adding arbitrary bytes to align the data of the file.
 '''
 class Padding(Field):
 
     '''
     value - value to padd with.
-    alignment - padd until a the size until the padding is a multiple of multiple_of.
+    alignment - padd until a the size is a multiple of alignment.
     '''
     def __init__(self, name, alignment, value):
         super().__init__(name)
@@ -19,7 +21,6 @@ class Padding(Field):
         self._has_relation = True
 
         self._size = 0
-        self.name = name
         self._value = value
         self._alignment = alignment
 
@@ -31,7 +32,7 @@ class Padding(Field):
 
     def set_to_relation(self):
         # get offset of self
-        rel = Relation('offset', self.name)
+        rel = Relation('offset', self._name)
         offset = self._parent.resolve_relation(rel)
         self._size = (-offset) % self._alignment
 

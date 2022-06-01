@@ -11,9 +11,8 @@ A generator for repeating on a generator multiple times.
 class Repeat(ParentField):
     def __init__(self, name, fields):
         super().__init__(name)
-        self.name = name
         self._children = fields
-        self._child_names = [f.name for f in self._children]
+        self._child_names = [f._name for f in self._children]
 
         self._mutations = [self._mutate_child, self._mutate_child, self._delete_child]
 
@@ -38,7 +37,7 @@ class Repeat(ParentField):
 
     def __getitem__(self, name):
         for child in self._children:
-            if child.name == name:
+            if child._name == name:
                 return child
             if isinstance(child, ParentField) and name in child:
                 return child[name]
@@ -64,7 +63,7 @@ class Repeat(ParentField):
         if len(self._children) > 0:
             idx = random.randint(0, len(self._children)-1)
             deleted_child = self._children.pop(idx)
-            return MutationReport(self.name, f'deleted {deleted_child.name}')
+            return MutationReport(self._name, f'deleted {deleted_child._name}')
 
     # mutate random child
     def _mutate_child(self):
@@ -73,7 +72,7 @@ class Repeat(ParentField):
             report = self._children[idx].mutate()
             
             if report is not None:
-                report.add_parent(self.name)
+                report.add_parent(self._name)
                 return report
     # ------------------------------------------------------
 

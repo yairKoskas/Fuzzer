@@ -12,7 +12,6 @@ class ChoiceGenerator(Generator):
     '''
     def __init__(self, generators: list, name=None):
         super().__init__(name)
-        self.name = name
         self._generators = generators
 
 

@@ -43,13 +43,6 @@ class Field:
     def has_relation(self):
         return self._has_relation
 
-    '''
-    get the relation of the generator
-    '''
-    def get_relation(self) -> 'generator.Relation':
-        if self._has_relation:
-            return self._relation
-
     def set_parent(self, parent: 'ParentField'):
         self._parent = parent
 

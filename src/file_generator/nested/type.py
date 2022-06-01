@@ -13,10 +13,10 @@ custom type, combine a group of generators.
 class Type(ParentField):
     def __init__(self, name, fields):
         super().__init__(name)
-        self.name = name
         self._children = fields
-        self._child_names = [f.name for f in self._children]
+        self._child_names = [f._name for f in self._children]
 
+        # each mutation should weight differently
         self._mutations = [self._mutate_child, self._delete_child, self._duplicate_child]
         self._weights = [10, 1, 1]
 
@@ -50,7 +50,7 @@ class Type(ParentField):
         if self._parent is None:
             return self.get_offset_by_name(name)
 
-        return self._parent.get_abs_offset_by_name(self.name) + self.get_offset_by_name(name)
+        return self._parent.get_abs_offset_by_name(self._name) + self.get_offset_by_name(name)
 
     def resolve_relation(self, relation):
         # look for the target
@@ -63,15 +63,17 @@ class Type(ParentField):
         else:
             return 0
 
+        # activate the relation
         return relation.resolve(target)
 
     def set_to_relation(self):
+        # set the relations of all children
         for f in self._children:
             f.set_to_relation()
 
     def __getitem__(self, name):
         for child in self._children:
-            if child.name == name:
+            if child._name == name:
                 return child
             if isinstance(child, ParentField) and name in child:
                 return child[name]
@@ -80,7 +82,7 @@ class Type(ParentField):
     
     def __contains__(self, name):
         for child in self._children:
-            if child.name == name or (isinstance(child, ParentField) and name in child):
+            if child._name == name or (isinstance(child, ParentField) and name in child):
                 return True
 
         return False
@@ -103,7 +105,7 @@ class Type(ParentField):
         if len(self._children) > 0:
             idx = random.randint(0, len(self._children)-1)
             deleted_child = self._children.pop(idx)
-            return MutationReport(self.name, f'deleted {deleted_child.name}')
+            return MutationReport(self._name, f'deleted {deleted_child._name}')
 
     # duplicate random child
     def _duplicate_child(self):
@@ -111,7 +113,7 @@ class Type(ParentField):
             idx = random.randint(0, len(self._children)-1)
             dup_child = copy.deepcopy(self._children[idx])
             self._children.insert(idx+1, dup_child)
-            return MutationReport(self.name, f'duplicated {dup_child.name}')
+            return MutationReport(self._name, f'duplicated {dup_child._name}')
 
     # mutate random child
     def _mutate_child(self):
@@ -120,13 +122,15 @@ class Type(ParentField):
             report = self._children[idx].mutate()
 
             if report is not None:
-                report.add_parent(self.name)
+                report.add_parent(self._name)
                 return report
     # ------------------------------------------------------
 
 
 class TypeGenerator(Generator):
-
+    '''
+    generators - list of generators of the children
+    '''
     def __init__(self, generators: list, name=None):
         super().__init__(name)
         self.name = name
@@ -134,6 +138,7 @@ class TypeGenerator(Generator):
 
 
     def get_field(self) -> bytes:
+        # combine the fields of all the children
         fields = [gen.get_field() for gen in self._generators]
         fields = list(filter(None, fields))
         if len(fields) == 0:

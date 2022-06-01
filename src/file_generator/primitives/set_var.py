@@ -12,7 +12,6 @@ class SetVarGenerator(Generator):
     '''
     def __init__(self, value : int, vars : dict, var_name : string, name=None):
         super().__init__(name)
-        self.name = name
         self._value = value
         self._vars = vars
         self._var_name = var_name
