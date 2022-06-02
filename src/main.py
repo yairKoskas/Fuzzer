@@ -21,7 +21,7 @@ def main_generate(args):
     template_file = args.input
 
     try:
-        fuzzer = generator_fuzzer.GeneratorFuzzer(args.program, template_file, args.crash_folder, args.timeout, args.extension, args.args)
+        fuzzer = generator_fuzzer.GeneratorFuzzer(args.program, template_file, args.crash_folder, args.timeout, args.extension, args.args, args.non_crashing_codes)
         fuzzer.fuzz_multiple(args.times if args.times >= 0 else 'inf')
     except FuzzerException as e:
         print(f'error: {str(e)}')
@@ -61,6 +61,8 @@ def main():
                         help='extension of the input files.')
     main_parser.add_argument('-a', '--args', type=str, nargs='+', default=['<fuzzed>'],
                         help='arguments to pass to the target program. \"<fuzzed>\" will be replaced by the fuzzed file.')
+    main_parser.add_argument('--non_crashing_codes', type=int, nargs='+', default=[],
+                        help='return codes that are not considered as a crash (except 0 and 1).')
 
 
     args = main_parser.parse_args()

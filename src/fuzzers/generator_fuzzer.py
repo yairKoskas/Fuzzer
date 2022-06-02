@@ -15,7 +15,7 @@ class GeneratorFuzzer:
         crash_folder - folder to save the files that casued crash
         """
 
-    def __init__(self, program: Path, template_format: Path, crash_folder: Path, timeout: int, extension: str, args: list):
+    def __init__(self, program: Path, template_format: Path, crash_folder: Path, timeout: int, extension: str, args: list, non_crashing_codes: list):
         self.timeout = timeout
         self.template_format = template_format
         self.program = program
@@ -23,6 +23,8 @@ class GeneratorFuzzer:
         self.crash_folder = crash_folder
         self.runner = runner.Runner()
         self.extension = extension
+        # 0 and 1 never considered as a crash
+        self.non_crashing_codes = [0,1] + non_crashing_codes
 
         self.parser = GeneratorParser(self.template_format)
         self.file_creator = self.parser.get_creator()
@@ -63,7 +65,7 @@ class GeneratorFuzzer:
         retcode = self.runner.run(self.program, self.args, self.timeout)
 
         # copy content to the crashed folder if neccesary
-        if retcode != 0 and retcode != 1:
+        if retcode not in self.non_crashing_codes:
             self.crash_report(self.temp_file, reports)
 
             return True
