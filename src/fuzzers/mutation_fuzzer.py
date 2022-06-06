@@ -4,11 +4,14 @@ import os
 
 class MutationFuzzer:
     """
-    program - program to fuzz
-    mutator - mutator to mutate the text with
+    program - path to program to fuzz
+    mutator - mutator to mutate the data with
     crash_folder - folder to save the files that casued crash
+    timeout - timeout for running the program in seconds
+    extension - extension of the files to fuzz
+    args - arguments to the program
+    non_crashing_codes - list of return codes that are not considered as a crash
     """
-
     def __init__(self, program: str, mutator, crash_folder: str, timeout: int, extension: str, args: list):
         self.timeout = timeout
         self.mutator = mutator
@@ -58,7 +61,6 @@ class MutationFuzzer:
     corpus - path to folder where the corpus files are
     times - number of times to fuzz the corpus
     '''
-
     def fuzz_corpus(self, corpus: str, times: int):
         if times == 'inf':
             while True:

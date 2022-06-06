@@ -9,12 +9,16 @@ import os
 
 
 class GeneratorFuzzer:
+    
     """
-        program - program to fuzz
-        template_format - path to template format file
-        crash_folder - folder to save the files that casued crash
-        """
-
+    program - path to program to fuzz
+    template_format - path to template format file
+    crash_folder - folder to save the files that casued crash
+    timeout - timeout for running the program in seconds
+    extension - extension of the files to fuzz
+    args - arguments to the program
+    non_crashing_codes - list of return codes that are not considered as a crash
+    """
     def __init__(self, program: Path, template_format: Path, crash_folder: Path, timeout: int, extension: str, args: list, non_crashing_codes: list):
         self.timeout = timeout
         self.template_format = template_format
