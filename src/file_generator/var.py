@@ -12,7 +12,7 @@ class Var:
         self._max_val = int(max_val) if max_val is not None else 256**4
         self._min_val = int(min_val) if min_val is not None else 0
 
-        self.choose_value()
+        self.choose_random_value()
         self._current_value = 0
 
     '''

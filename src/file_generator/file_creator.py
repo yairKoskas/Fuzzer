@@ -25,7 +25,7 @@ class FileCreator:
     def create_file(self, mutations: int):
         # set value to all variables
         for v in self._vars:
-            v.choose_value()
+            v.choose_random_value()
 
         reports = list()
 
