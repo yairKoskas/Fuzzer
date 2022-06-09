@@ -1,6 +1,8 @@
 import runner
 import os
 
+from mutators.mutator import Mutator
+
 
 class MutationFuzzer:
     """
@@ -12,13 +14,15 @@ class MutationFuzzer:
     args - arguments to the program
     non_crashing_codes - list of return codes that are not considered as a crash
     """
-    def __init__(self, program: str, mutator, crash_folder: str, timeout: int, extension: str, args: list):
+    def __init__(self, program: str, mutator : Mutator, crash_folder: str, timeout: int, extension: str, args: list,non_crashing_codes: list):
         self.timeout = timeout
         self.mutator = mutator
         self.program = program
         self.crashes = 0
         self.crash_folder = crash_folder
         self.runner = runner.Runner()
+        # 0 and 1 never considered as a crash
+        self.non_crashing_codes = [0,1] + non_crashing_codes
 
         # temporary file to save fuzzed files at
         self.temp_file = f'./temp.{extension}'
@@ -43,7 +47,7 @@ class MutationFuzzer:
         retcode = self.runner.run(self.program, self.args, self.timeout)
 
         # copy content to the crashed folder if neccesary
-        if retcode != 0 and retcode != 1:
+        if retcode not in self.non_crashing_codes:
             with open(self.temp_file, 'rb') as f1:
                 crash_path = os.path.join(self.crash_folder, str(self.crashes))
                 self.crashes += 1

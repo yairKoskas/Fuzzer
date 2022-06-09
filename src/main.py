@@ -37,7 +37,7 @@ def main_mutate(args):
         [bitinsert_mutator.BitInsertMutator(), bitflip_mutator.BitFlippingMutator()])
 
     try:
-        fuzzer = mutation_fuzzer.MutationFuzzer(args.program, mutator, args.crash_folder, args.timeout, args.extension, args.args)
+        fuzzer = mutation_fuzzer.MutationFuzzer(args.program, mutator, args.crash_folder, args.timeout, args.extension, args.args, args.non_crashing_codes)
         fuzzer.fuzz_corpus(corpus, args.times if args.times >= 0 else 'inf')
     except FuzzerException as e:
         print(f'error: {str(e)}')
