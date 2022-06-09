@@ -1,5 +1,4 @@
 import random
-from typing_extensions import Self
 
 from file_generator.field import Field
 from file_generator.generator import Generator
