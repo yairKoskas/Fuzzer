@@ -1,8 +1,11 @@
 import random
 import os
 
+from mutators.mutator import Mutator
+
+
 # simple mutator that insert random bytes in the array
-class BitInsertMutator:
+class BitInsertMutator(Mutator):
 
     '''
     parameters:

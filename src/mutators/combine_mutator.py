@@ -1,8 +1,10 @@
 import random
 import os
 
+from mutators.mutator import Mutator
+
 # combine 2 mutators
-class CombinetMutator:
+class CombinetMutator(Mutator):
 
     '''
     parameters:

@@ -1,7 +1,9 @@
 import random
 
+from mutators.mutator import Mutator
+
 # simple mutator that flips random bits
-class BitFlippingMutator:
+class BitFlippingMutator(Mutator):
 
     '''
     parameters:
