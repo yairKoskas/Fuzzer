@@ -48,6 +48,7 @@ class MutationFuzzer:
 
         # copy content to the crashed folder if neccesary
         if retcode not in self.non_crashing_codes:
+            print(f'found crash with exit code {retcode}')
             with open(self.temp_file, 'rb') as f1:
                 crash_path = os.path.join(self.crash_folder, str(self.crashes))
                 self.crashes += 1

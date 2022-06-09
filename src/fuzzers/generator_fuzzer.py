@@ -71,6 +71,7 @@ class GeneratorFuzzer:
         # copy content to the crashed folder if neccesary
         if retcode not in self.non_crashing_codes:
             self.crash_report(self.temp_file, reports)
+            print(f'found crash with exit code {retcode}')
 
             return True
 
