@@ -87,7 +87,11 @@ class GeneratorFuzzer:
     def fuzz_multiple(self, times: int):
         if times == 'inf':
             while True:
-                self.fuzz_once()
+                # catch when user terminates by cntrl+c
+                try:
+                    self.fuzz_once()
+                except KeyboardInterrupt:
+                    break
 
         else:
             for _ in range(times):

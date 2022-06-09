@@ -68,12 +68,16 @@ class MutationFuzzer:
     def fuzz_corpus(self, corpus: str, times: int):
         if times == 'inf':
             while True:
-                for file in os.listdir(corpus):
+                # catch when user terminates by cntrl+c
+                try:
+                    for file in os.listdir(corpus):
 
-                    file = os.fsdecode(file)
-                    path = os.path.join(corpus, file)
-                    if os.path.isfile(path):
-                        self.fuzz_file(path)
+                        file = os.fsdecode(file)
+                        path = os.path.join(corpus, file)
+                        if os.path.isfile(path):
+                            self.fuzz_file(path)
+                except KeyboardInterrupt:
+                    break
 
         else:
             for _ in range(times):
