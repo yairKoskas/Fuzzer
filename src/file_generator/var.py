@@ -18,7 +18,7 @@ class Var:
     '''
     Generate a valid value for the variable and save it in the current state of the variable.
     '''
-    def choose_value(self):
+    def choose_random_value(self):
         self._current_value = random.randint(self._min_val,self._max_val)
 
     def set_value(self, val):

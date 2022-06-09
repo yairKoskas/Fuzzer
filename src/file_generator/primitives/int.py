@@ -84,7 +84,6 @@ class IntGenerator(Generator):
         super().__init__(name) 
         self._size = size
         self._value = value
-        self._value = value
         self._endian = endian
         self._max_val = max_val
         self._min_val = min_val
