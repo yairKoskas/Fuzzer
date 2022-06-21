@@ -40,6 +40,8 @@ In the templateFormat directory there are examples of templates for the for the 
 
 The argumant `--input` contains the path to template file.
 
+You can generate non-mutated files in order to test your template using the `main_test_template` script
+
 ### mutation-based fuzzing
 
 Mutation fuzzing get a corpus of files in the format the target program gets, it takes the files from the corpus and make random mutations to them.

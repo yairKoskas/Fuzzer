@@ -10,7 +10,7 @@ sys.path.append(os.getcwd())
 # simple main file to generate valid file to test template file
 def main():
     if len(sys.argv) < 2:
-        print('Usage: python3 main.py [template file] [extension]')
+        print('Usage: python3 main_test_template.py [template file] [extension]')
         return -1
 
     template_file, extension = sys.argv[1], sys.argv[2]
