@@ -28,6 +28,8 @@ Optional arguments:
 During the fuzzing, each file that cause the program to crash will be written to the folder specified in `crash_folder`, if the files where generated from a template, then also a report of the mutaion locations will be added to same directory.<br>
 In order to stop the fuzzing, press cnrl+c.
 
+A dockerfile is also supplied for running the fuzzer in a docker (change the file to upload your program and change the arguments)
+
 
 ## types of fuzzing
 ### generation-based smart fuzzing
