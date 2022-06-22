@@ -21,8 +21,6 @@ def main():
     report, file = creator.create_file(0)
     with open(f'output.{extension}', 'wb') as f:
         f.write(file)
-    with open(f'report.txt', 'w') as f:
-        f.write(str(report))
 
 
 if __name__ == "__main__":

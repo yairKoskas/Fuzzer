@@ -7,6 +7,9 @@ Both fuzzers work in a similar way:
 - feed the muatted file to [Runner](../src/runner.py) and check the return code.
 - reapet!
 
+The general flow of a normal fuzzing process:
+![](./flow.png)
+
 More on how the file generation works can be found [here](./file_generation.md).
 
 Class UML for the fuzzers:

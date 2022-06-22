@@ -20,6 +20,7 @@ An int member in a genenrator object can be of type [`VarExpression`](../src/fil
 
 ### mutaions
 Mutation changes one field in the file, the mutaion happens recursively, each primitive type change self in certain way, and nested types might call to mutaions on one of its children. The mutations are designed in such a way that it is more likely to trigger a bug.<br>
+The number of fields being mutated is a random power of 2 between 0 to 32.
 
 List of possible mutations:<br>
 int:

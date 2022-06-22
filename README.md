@@ -40,7 +40,7 @@ In the templateFormat directory there are examples of templates for the for the 
 
 The argumant `--input` contains the path to template file.
 
-You can generate non-mutated files in order to test your template using the `main_test_template` script
+You can generate non-mutated files in order to test your template using the `main_test_template` script (the result will be written into `output.<extention>`)
 
 ### mutation-based fuzzing
 
