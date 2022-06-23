@@ -1,4 +1,5 @@
 import os
+import uuid
 from pdb import runeval
 import sys
 import signal
@@ -48,14 +49,15 @@ class CoverageRunner:
 
     returns: the return code of the program.
     '''
-    def run(self, path, args, timeout, saved_states):
+    def run(self, path, args, timeout, saved_states, corpus):
         if not os.path.isfile(path) or not os.access(path, os.X_OK):
             raise Exception('File doesn\'t exist or isn\'t executable')
         states, proc_code = self.coverage_evaluator.get_coverage(path, args, timeout)
         power_plan_value = power_plan_evaluator.get_value_percentage(states, saved_states)
         if len(states - saved_states) > 0:
             # save the new states in the set
+            print(f'Coverage: Added {len(states - saved_states)} blocks')
             saved_states |= states
             # signal to the fuzzer that the program reached a new state
-            proc_code = 2
+            os.system(f'cp {os.path.abspath(args[0])} {corpus + "/" + str(uuid.uuid4())} ')
         return proc_code, power_plan_value

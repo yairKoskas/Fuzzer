@@ -1,3 +1,5 @@
+import uuid
+
 from evaluators.coverage_evaluator import CoverageEvaluator
 import runner
 import os
@@ -32,7 +34,7 @@ class CoverageFuzzer:
     fuzz a specific file
     returns - True if fuzzed file caused crash and False otherwise
     '''
-    def fuzz_file(self, file: str):
+    def fuzz_file(self, file: str, corpus: str=None):
         if not os.path.isfile(file):
             raise Exception('File doesn\'t exist')
 
@@ -44,9 +46,9 @@ class CoverageFuzzer:
 
         # todo: make wrapper object around self.runner.run return value so this will be less ugly
         if type(self.runner) == runner.CoverageRunner:
-            retcode, power_plan = self.runner.run(self.program, self.args, self.timeout, self.saved_states)
+            retcode, power_plan = self.runner.run(self.program, self.args, self.timeout, self.saved_states, corpus)
         else:
-            self.runner.run(self.program, self.args, self.timeout, self.saved_states)
+            self.runner.run(self.program, self.args, self.timeout)
         # copy content to the crashed folder if neccesary
         if retcode != 0 and retcode != 1:
             with open(self.temp_file, 'rb') as f1:
@@ -69,20 +71,23 @@ class CoverageFuzzer:
     '''
 
     def fuzz_corpus(self, corpus: str, times: int):
+        new_corpus = f'/tmp/temporary_corpus_{uuid.uuid4()}'
+        os.system(f'cp -r {os.path.abspath(corpus)} {new_corpus}')
         if times == 'inf':
             while True:
-                for file in os.listdir(corpus):
+                for file in os.listdir(new_corpus):
 
                     file = os.fsdecode(file)
-                    path = os.path.join(corpus, file)
+                    path = os.path.join(new_corpus, file)
                     if os.path.isfile(path):
-                        self.fuzz_file(path)
+                        self.fuzz_file(path, new_corpus)
 
         else:
             for _ in range(times):
-                for file in os.listdir(corpus):
+                for file in os.listdir(new_corpus):
 
                     file = os.fsdecode(file)
-                    path = os.path.join(corpus, file)
+                    path = os.path.join(new_corpus, file)
                     if os.path.isfile(path):
-                        self.fuzz_file(path)
+                        self.fuzz_file(path, new_corpus)
+            os.rmdir(f'{new_corpus}')
