@@ -60,6 +60,8 @@ Process.enumerateThreads({
     onMatch: function (thread) {
         if (threadlist.indexOf(thread.id) < 0 &&
             threadlist.indexOf('all') < 0) {
+            // This is not the thread you're look for
+            console.log('Fuck');
             return;
         }
         console.log('Stalking thread ' + thread.id + '.');

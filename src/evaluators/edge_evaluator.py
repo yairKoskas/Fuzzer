@@ -1,5 +1,5 @@
 from evaluators.coverage_evaluator import CoverageEvaluator
-from scripts.ghidra_cfg import get_cfg
+from evaluators.scripts.ghidra_cfg import get_cfg
 from collections import defaultdict
 from typing import Set
 
