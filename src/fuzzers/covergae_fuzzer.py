@@ -3,7 +3,7 @@ import runner
 import os
 
 
-class MutationFuzzer:
+class CoverageFuzzer:
     """
     program - program to fuzz
     mutator - mutator to mutate the text with

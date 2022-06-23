@@ -11,6 +11,7 @@ import mutators.bitflip_mutator as bitflip_mutator
 import mutators.bitinsert_mutator as bitinsert_mutator
 import mutators.combine_mutator as combine_mutator
 from fuzzers import generator_fuzzer
+from fuzzers import covergae_fuzzer
 from exception import FuzzerException
 
 
@@ -43,12 +44,28 @@ def main_mutate(args):
         print(f'error: {str(e)}')
         return -1
 
+'''
+main function for blackbox mutaion fuzzing.
+'''
+def main_coverage(args):
+    corpus = args.input
+
+    mutator = combine_mutator.CombinetMutator(
+        [bitinsert_mutator.BitInsertMutator(), bitflip_mutator.BitFlippingMutator()])
+
+    try:
+        fuzzer = covergae_fuzzer.CoverageFuzzer(args.program, mutator, args.crash_folder, args.timeout, args.extension, args.args, args.coverage)
+        fuzzer.fuzz_corpus(corpus, args.times if args.times >= 0 else 'inf')
+    except FuzzerException as e:
+        print(f'error: {str(e)}')
+        return -1
+
 def main():
     main_parser = argparse.ArgumentParser(description='Fuzzer')
     main_parser.add_argument('-p', '--program', type=str, required=True,
                         help='path to target program.')
     main_parser.add_argument('-t', '--type', type=str, required=True,
-                        help='type of the fuzzer, can be mutation or generation')
+                        help='type of the fuzzer, can be mutation, generation or coverage')
     main_parser.add_argument('-c', '--crash_folder', type=str, default='./crash',
                         help='path to save the files that caused the program to crash.')
     main_parser.add_argument('--times', type=int, default=-1,
@@ -63,6 +80,8 @@ def main():
                         help='arguments to pass to the target program. \"<fuzzed>\" will be replaced by the fuzzed file.')
     main_parser.add_argument('--non_crashing_codes', type=int, nargs='+', default=[],
                         help='return codes that are not considered as a crash (except 0 and 1).')
+    main_parser.add_argument('-cov', '--coverage', type=str, required=False,
+                        help='code coverage type for coverage-based fuzzing.')
 
 
     args = main_parser.parse_args()
@@ -79,6 +98,8 @@ def main():
         return main_mutate(args)
     elif args.type == 'generation' or args.type == 'gen':
         return main_generate(args)
+    elif args.type == 'coverage' or args.type == 'cov':
+        return main_coverage(args)
     else:
         print(f'fuzzing type {args.type} not supported')
         return -1
