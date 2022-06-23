@@ -13,7 +13,6 @@ function make_maps() {
 
 var maps = make_maps()
 send({'map': maps});
-console.log('sent maps')
 var module_ids = {};
 maps.map(function (e) {
     module_ids[e.path] = {id: e.id, start: e.base};
@@ -54,17 +53,14 @@ function drcov_bbs(bbs, fmaps, path_ids) {
 }
 
 Stalker.trustThreshold = 0;
-console.log('Starting to stalk threads...');
 
 Process.enumerateThreads({
     onMatch: function (thread) {
         if (threadlist.indexOf(thread.id) < 0 &&
             threadlist.indexOf('all') < 0) {
             // This is not the thread you're look for
-            console.log('Fuck');
             return;
         }
-        console.log('Stalking thread ' + thread.id + '.');
         Stalker.follow(thread.id, {
             events: {
                 compile: true
@@ -77,5 +73,5 @@ Process.enumerateThreads({
             }
         });
     },
-    onComplete: function () { console.log('Done stalking threads.'); }
+    onComplete: function () {}
 });
