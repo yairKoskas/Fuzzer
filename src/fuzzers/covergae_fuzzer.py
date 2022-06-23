@@ -2,28 +2,25 @@ from evaluators.coverage_evaluator import CoverageEvaluator
 import runner
 import os
 
-from mutators.mutator import Mutator
 
-
-class MutationFuzzer:
+class CoverageFuzzer:
     """
-    program - path to program to fuzz
-    mutator - mutator to mutate the data with
+    program - program to fuzz
+    mutator - mutator to mutate the text with
     crash_folder - folder to save the files that casued crash
-    timeout - timeout for running the program in seconds
-    extension - extension of the files to fuzz
-    args - arguments to the program
-    non_crashing_codes - list of return codes that are not considered as a crash
     """
-    def __init__(self, program: str, mutator : Mutator, crash_folder: str, timeout: int, extension: str, args: list,non_crashing_codes: list):
+
+    def __init__(self, program: str, mutator, crash_folder: str, timeout: int, extension: str, args: list, coverage_type: str=None):
         self.timeout = timeout
         self.mutator = mutator
         self.program = program
         self.crashes = 0
         self.crash_folder = crash_folder
-        self.runner = runner.Runner()
-        # 0 and 1 never considered as a crash
-        self.non_crashing_codes = [0,1] + non_crashing_codes
+        self.saved_states = set()
+        if coverage_type:
+            self.runner = runner.CoverageRunner(coverage_type, program)
+        else:
+            self.runner = runner.Runner()
 
         # temporary file to save fuzzed files at
         self.temp_file = f'./temp.{extension}'
@@ -51,8 +48,7 @@ class MutationFuzzer:
         else:
             self.runner.run(self.program, self.args, self.timeout, self.saved_states)
         # copy content to the crashed folder if neccesary
-        if retcode not in self.non_crashing_codes:
-            print(f'found crash with exit code {retcode}')
+        if retcode != 0 and retcode != 1:
             with open(self.temp_file, 'rb') as f1:
                 # todo, make file have powerplan value (add json field?)
                 crash_path = os.path.join(self.crash_folder, str(self.crashes))
@@ -71,19 +67,16 @@ class MutationFuzzer:
     corpus - path to folder where the corpus files are
     times - number of times to fuzz the corpus
     '''
+
     def fuzz_corpus(self, corpus: str, times: int):
         if times == 'inf':
             while True:
-                # catch when user terminates by cntrl+c
-                try:
-                    for file in os.listdir(corpus):
+                for file in os.listdir(corpus):
 
-                        file = os.fsdecode(file)
-                        path = os.path.join(corpus, file)
-                        if os.path.isfile(path):
-                            self.fuzz_file(path)
-                except KeyboardInterrupt:
-                    break
+                    file = os.fsdecode(file)
+                    path = os.path.join(corpus, file)
+                    if os.path.isfile(path):
+                        self.fuzz_file(path)
 
         else:
             for _ in range(times):

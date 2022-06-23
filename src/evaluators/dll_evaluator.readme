@@ -1,0 +1,1 @@
+every dll has it's exported symbols, need to ask if we want to make it an in process fuzzing of the dll by altering the input or just getting the code coverage
