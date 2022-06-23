@@ -46,6 +46,7 @@ class MutationFuzzer:
             f.write(self.mutator.mutate(content))
 
         # todo: make wrapper object around self.runner.run return value so this will be less ugly
+        self.saved_states = None
         if type(self.runner) == runner.CoverageRunner:
             retcode, power_plan = self.runner.run(self.program, self.args, self.timeout, self.saved_states)
         else:

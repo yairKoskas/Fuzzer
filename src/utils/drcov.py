@@ -24,6 +24,9 @@ class Block:
     def __hash__(self):
         return int(str(self.start) + str(self.end) + str(self.module))
 
+    def __eq__(self, other):
+        return self.start == other.start and self.end == other.end and self.module == other.module
+
 
 def parse_coverage(coverage):
     blocks_str = b''.join(coverage)
