@@ -14,7 +14,7 @@ The target have to be a single-process executable file that accept a file as one
 To run the fuzzer, run the file `src/main.py` using python with the following arguments.<br>
 Required arguments:
 - `--program` (or `-p`): Path to the fuzzing target.
-- `--type` (or `-t`): Type of fuzzing, valid options are `mutation` (or `mut`) and `generation` (or `gen`) for details see [types of fuzzing](#types-of-fuzzing).
+- `--type` (or `-t`): Type of fuzzing, valid options are `mutation` (or `mut`), `generation` (or `gen`) and `coverage` (or `cov`) for details see [types of fuzzing](#types-of-fuzzing).
 - `--input` (or `-i`): Different for each fuzzing type.
 <br><br>
 Optional arguments:
@@ -23,7 +23,8 @@ Optional arguments:
 - `--timeout`: stop the target program after a certain amount of seconds if program don't halt, used to prevent the fuzzer from wasting too much time on one file (default is 5).
 - `--extension` (or `-e`): extention of the fuzzed file format (default is `txt`).
 - `--args` (or `-a`): list of arguments to pass to the target program. `<fuzzed>` will be replaced by the fuzzed file. (default is `<fuzzed>`, i.e a program that gets the fuzzed file as the first argument).
-- `--non_crashing_codes`: list of exit codes (except 0 and 1) that fuzzer should not consider as a crash. 
+- `--non_crashing_codes`: list of exit codes (except 0 and 1) that fuzzer should not consider as a crash.
+- `--coverage` (or -cov):
 
 During the fuzzing, each file that cause the program to crash will be written to the folder specified in `crash_folder`, if the files where generated from a template, then also a report of the mutaion locations will be added to same directory.<br>
 In order to stop the fuzzing, press cnrl+c.
@@ -47,5 +48,10 @@ You can generate non-mutated files in order to test your template using the `mai
 ### mutation-based fuzzing
 
 Mutation fuzzing get a corpus of files in the format the target program gets, it takes the files from the corpus and make random mutations to them.
+
+The argumant `--input` contains the path to a corpus with sample files of the required format.
+
+### code-coverage based fuzzing
+A code-coverage based fuzzing (AKA greybox fuzzing) tries to maximize code coverage achieved by the inputs, as more code coverage usually results in greater chances of finding a bug.
 
 The argumant `--input` contains the path to a corpus with sample files of the required format.
