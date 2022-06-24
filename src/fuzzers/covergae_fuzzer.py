@@ -12,13 +12,15 @@ class CoverageFuzzer:
     crash_folder - folder to save the files that casued crash
     """
 
-    def __init__(self, program: str, mutator, crash_folder: str, timeout: int, extension: str, args: list, coverage_type: str=None):
+    def __init__(self, program: str, mutator, crash_folder: str, timeout: int, extension: str, args: list, non_crashing_codes: list, coverage_type: str=None):
         self.timeout = timeout
         self.mutator = mutator
         self.program = program
         self.crashes = 0
         self.crash_folder = crash_folder
         self.saved_states = set()
+        # 0 and 1 never considered as a crash
+        self.non_crashing_codes = [0,1] + non_crashing_codes
         if coverage_type:
             self.runner = runner.CoverageRunner(coverage_type, program)
         else:
@@ -50,7 +52,7 @@ class CoverageFuzzer:
         else:
             self.runner.run(self.program, self.args, self.timeout)
         # copy content to the crashed folder if neccesary
-        if retcode != 0 and retcode != 1:
+        if retcode not in self.non_crashing_codes:
             with open(self.temp_file, 'rb') as f1:
                 # todo, make file have powerplan value (add json field?)
                 crash_path = os.path.join(self.crash_folder, str(self.crashes))
