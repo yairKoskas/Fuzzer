@@ -54,7 +54,7 @@ def main_coverage(args):
         [bitinsert_mutator.BitInsertMutator(), bitflip_mutator.BitFlippingMutator()])
 
     try:
-        fuzzer = covergae_fuzzer.CoverageFuzzer(args.program, mutator, args.crash_folder, args.timeout, args.extension, args.args, args.coverage)
+        fuzzer = covergae_fuzzer.CoverageFuzzer(args.program, mutator, args.crash_folder, args.timeout, args.extension, args.args, args.non_crashing_codes, args.coverage)
         fuzzer.fuzz_corpus(corpus, args.times if args.times >= 0 else 'inf')
     except FuzzerException as e:
         print(f'error: {str(e)}')

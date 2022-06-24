@@ -1,4 +1,3 @@
-from evaluators.coverage_evaluator import CoverageEvaluator
 import runner
 import os
 
@@ -45,17 +44,12 @@ class MutationFuzzer:
         with open(self.temp_file, 'wb') as f:
             f.write(self.mutator.mutate(content))
 
-        # todo: make wrapper object around self.runner.run return value so this will be less ugly
-        self.saved_states = None
-        if type(self.runner) == runner.CoverageRunner:
-            retcode, power_plan = self.runner.run(self.program, self.args, self.timeout, self.saved_states)
-        else:
-            self.runner.run(self.program, self.args, self.timeout, self.saved_states)
+        retcode = self.runner.run(self.program, self.args, self.timeout)
+
         # copy content to the crashed folder if neccesary
         if retcode not in self.non_crashing_codes:
             print(f'found crash with exit code {retcode}')
             with open(self.temp_file, 'rb') as f1:
-                # todo, make file have powerplan value (add json field?)
                 crash_path = os.path.join(self.crash_folder, str(self.crashes))
                 self.crashes += 1
                 with open(crash_path, 'wb') as f2:
@@ -67,7 +61,6 @@ class MutationFuzzer:
 
     '''
     fuzz a whole corpus
-
     parameters:
     corpus - path to folder where the corpus files are
     times - number of times to fuzz the corpus
