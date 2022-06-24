@@ -1,10 +1,10 @@
 import random
 import os
 
-from mutators.mutator import Mutator
+from mutators import mutator
 
-# combine 2 mutators
-class CombinetMutator(Mutator):
+# combine multiple mutators
+class CombinetMutator(mutator.Mutator):
 
     '''
     parameters:
@@ -16,8 +16,12 @@ class CombinetMutator(Mutator):
     mutate the data
     '''
     def mutate(self, data: bytes):
-        # choose mutator
-        mutator = random.choice(self.mutators)
-        return mutator.mutate(data)
+        times_to_mutate = random.choice([1,2,4,8,16,32])
+        for _ in range(times_to_mutate):
+            # choose mutator
+            mutator = random.choice(self.mutators)
+            data = mutator.mutate(data)
+
+        return data
 
 

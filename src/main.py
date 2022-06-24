@@ -7,8 +7,8 @@ import argparse
 sys.path.append(os.getcwd())
 
 from fuzzers import mutation_fuzzer
-import mutators.bitflip_mutator as bitflip_mutator
-import mutators.bitinsert_mutator as bitinsert_mutator
+from mutators import simple_mutators
+from mutators import combine_mutator
 import mutators.combine_mutator as combine_mutator
 from fuzzers import generator_fuzzer
 from fuzzers import covergae_fuzzer
@@ -35,7 +35,12 @@ def main_mutate(args):
     corpus = args.input
 
     mutator = combine_mutator.CombinetMutator(
-        [bitinsert_mutator.BitInsertMutator(), bitflip_mutator.BitFlippingMutator()])
+        [simple_mutators.BitFlippingMutator(),
+        simple_mutators.ByteDeleteMutator(),
+        simple_mutators.ByteInsertMutator(),
+        simple_mutators.ExtremeValueMutator(),
+        simple_mutators.ByteSetMutator(),
+        simple_mutators.DuplicateMutator()])
 
     try:
         fuzzer = mutation_fuzzer.MutationFuzzer(args.program, mutator, args.crash_folder, args.timeout, args.extension, args.args, args.non_crashing_codes)
@@ -51,7 +56,12 @@ def main_coverage(args):
     corpus = args.input
 
     mutator = combine_mutator.CombinetMutator(
-        [bitinsert_mutator.BitInsertMutator(), bitflip_mutator.BitFlippingMutator()])
+        [simple_mutators.BitFlippingMutator(),
+        simple_mutators.ByteDeleteMutator(),
+        simple_mutators.ByteInsertMutator(),
+        simple_mutators.ExtremeValueMutator(),
+        simple_mutators.ByteSetMutator(),
+        simple_mutators.DuplicateMutator()])
 
     try:
         fuzzer = covergae_fuzzer.CoverageFuzzer(args.program, mutator, args.crash_folder, args.timeout, args.extension, args.args, args.non_crashing_codes, args.coverage)
