@@ -1,1 +1,2 @@
 bitarray==2.4.0
+frida==15.1.27
