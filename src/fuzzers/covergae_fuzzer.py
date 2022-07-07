@@ -3,7 +3,7 @@ import uuid
 from evaluators.coverage_evaluator import CoverageEvaluator
 import runner
 import os
-
+import shutil
 
 class CoverageFuzzer:
     """
@@ -73,8 +73,16 @@ class CoverageFuzzer:
     '''
 
     def fuzz_corpus(self, corpus: str, times: int):
-        new_corpus = f'/tmp/temporary_corpus_{uuid.uuid4()}'
-        os.system(f'cp -r {os.path.abspath(corpus)} {new_corpus}')
+        new_corpus = f'./temp'
+
+        if not os.path.isdir(new_corpus):
+            os.mkdir(new_corpus)
+        
+        # copy all files in corpus to new_corpus
+        for filename in os.listdir(corpus):
+            f = os.path.join(corpus, filename)
+            shutil.copy(f, new_corpus)
+
         if times == 'inf':
             while True:
                 for file in os.listdir(new_corpus):
@@ -92,4 +100,4 @@ class CoverageFuzzer:
                     path = os.path.join(new_corpus, file)
                     if os.path.isfile(path):
                         self.fuzz_file(path, new_corpus)
-            os.rmdir(f'{new_corpus}')
+        

@@ -3,6 +3,7 @@ import uuid
 from pdb import runeval
 import sys
 import signal
+import shutil
 import subprocess
 from factories.coverage_evaluator_factory import CoverageEvaluatorFactory
 from evaluators import power_plan_evaluator
@@ -59,5 +60,5 @@ class CoverageRunner:
             print(f'Coverage: Added {len(states - saved_states)} blocks')
             saved_states |= states
             # signal to the fuzzer that the program reached a new state
-            os.system(f'cp {os.path.abspath(args[0])} {corpus + "/" + str(uuid.uuid4())} ')
+            shutil.copy(args[0], corpus)
         return proc_code, power_plan_value
