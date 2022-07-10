@@ -1,3 +1,4 @@
+from distutils import extension
 import os
 import uuid
 from pdb import runeval
@@ -50,7 +51,7 @@ class CoverageRunner:
 
     returns: the return code of the program.
     '''
-    def run(self, path, args, timeout, saved_states, corpus):
+    def run(self, path, args, timeout, saved_states, corpus, input_file):
         if not os.path.isfile(path) or not os.access(path, os.X_OK):
             raise Exception('File doesn\'t exist or isn\'t executable')
         states, proc_code = self.coverage_evaluator.get_coverage(path, args, timeout)
@@ -60,5 +61,6 @@ class CoverageRunner:
             print(f'Coverage: Added {len(states - saved_states)} blocks')
             saved_states |= states
             # signal to the fuzzer that the program reached a new state
-            shutil.copy(args[0], corpus)
+            extension = os.path.splitext(input_file)[1]
+            shutil.copy(input_file, os.path.join(corpus, os.urandom(6).hex())+extension)
         return proc_code, power_plan_value

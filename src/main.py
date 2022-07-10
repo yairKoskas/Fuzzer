@@ -90,7 +90,7 @@ def main():
                         help='arguments to pass to the target program. \"<fuzzed>\" will be replaced by the fuzzed file.')
     main_parser.add_argument('--non_crashing_codes', type=int, nargs='+', default=[],
                         help='return codes that are not considered as a crash (except 0 and 1).')
-    main_parser.add_argument('-cov', '--coverage', type=str, required=False,
+    main_parser.add_argument('-cov', '--coverage', type=str, required=False, default='block',
                         help='code coverage type for coverage-based fuzzing.')
 
 

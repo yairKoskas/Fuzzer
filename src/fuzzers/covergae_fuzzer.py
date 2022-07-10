@@ -47,10 +47,8 @@ class CoverageFuzzer:
             f.write(self.mutator.mutate(content))
 
         # todo: make wrapper object around self.runner.run return value so this will be less ugly
-        if type(self.runner) == runner.CoverageRunner:
-            retcode, power_plan = self.runner.run(self.program, self.args, self.timeout, self.saved_states, corpus)
-        else:
-            self.runner.run(self.program, self.args, self.timeout)
+        retcode, power_plan = self.runner.run(self.program, self.args, self.timeout, self.saved_states, corpus, self.temp_file)
+
         # copy content to the crashed folder if neccesary
         if retcode not in self.non_crashing_codes:
             with open(self.temp_file, 'rb') as f1:
